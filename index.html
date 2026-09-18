@@ -103,6 +103,31 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:6px 16px 30px}
 @keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:99;opacity:0;transition:opacity .3s;pointer-events:none}
 .toast.show{opacity:1}
+.drop{border:2px dashed #bcd0f7;border-radius:12px;background:#f8faff;padding:22px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s}
+.drop:hover,.drop.over{border-color:var(--blue);background:#eef4ff}
+.drop b{display:block;font-size:14.5px;margin-bottom:4px}
+.drop small{color:var(--mut);font-size:12px}
+.verdict{border-radius:12px;padding:14px 16px;margin-top:14px;font-size:14px;line-height:1.6}
+.verdict.ok{background:var(--okbg);border:1px solid #86efac}
+.verdict.warn{background:#fffbeb;border:1px solid #f5d78a}
+.verdict.no{background:var(--badbg);border:1px solid #fca5a5}
+.verdict b.t{font-size:16px}
+.minitab{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+.minitab th{text-align:left;font-size:11px;text-transform:uppercase;color:var(--mut);padding:7px 8px;border-bottom:1px solid var(--line);background:#f8fafc;position:static}
+.minitab td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.prog{font-size:13px;color:var(--blue);font-weight:700;margin-top:10px;min-height:18px}
+.printh{display:none}
+@media print{
+  .top,.kpis,.layout,.cards2,footer,.drawer,.drawer-veil,.toast,.drop,.prog,.noprint,.verdict .btn{display:none!important}
+  body{background:#fff}
+  .page{max-width:none;margin:0;padding:0 8px}
+  .panel{border:0;padding:0}
+  .printh{display:block;text-align:center;margin-bottom:12px}
+  .printh b{font-size:17px}
+  .printh small{color:#555}
+  .minitab{font-size:12px}
+  .verdict{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
 @media(max-width:900px){
   .drawer{width:100vw}
   .kv{grid-template-columns:80px 1fr}
@@ -151,6 +176,19 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:6px 16px 30px}
       </table></div>
       <button class="more" id="btnMore">Mostrar mais</button>
     </div>
+  </div>
+
+  <div class="panel" style="margin-top:14px" aria-label="Analisar arquivo com CNAEs">
+    <div class="printh"><b>Consulta CNAE — Análise de enquadramento no Simples Nacional</b><br><small id="printDate"></small></div>
+    <h2>📄 Analisar cartão CNPJ / arquivo</h2>
+    <p class="sub">Envie PDF, imagem (foto/print do cartão CNPJ) ou TXT com CNAEs — extraímos os códigos e dizemos se a empresa pode optar pelo Simples e quais anexos se aplicam. Tudo processado no seu navegador, nada é enviado.</p>
+    <div class="drop" id="dz" role="button" tabindex="0" aria-label="Enviar arquivo PDF, imagem ou texto">
+      <b>Arraste o arquivo aqui ou clique para escolher</b>
+      <small>PDF · PNG · JPG · WEBP · TXT (cartão CNPJ da Receita, lista de CNAEs…)</small>
+      <input type="file" id="fin" accept=".pdf,.txt,.text,.png,.jpg,.jpeg,.webp,.bmp" hidden>
+    </div>
+    <div class="prog" id="aprog" aria-live="polite"></div>
+    <div id="aout"></div>
   </div>
 
   <div class="cards2">
@@ -337,6 +375,127 @@ let cT=null;
 [rbtEl,mesEl,folhaEl].forEach(el=>el.addEventListener("input",()=>{clearTimeout(cT);cT=setTimeout(calc,300);}));
 anexoEl.addEventListener("change",calc);
 calc();
+
+/* ===== Analisador de arquivo (PDF / imagem / TXT) ===== */
+function loadScriptOnce(src){
+  return new Promise((res,rej)=>{
+    if([...document.scripts].some(s=>s.src===src||s.getAttribute("src")===src))return res();
+    const s=document.createElement("script");s.src=src;s.onload=res;s.onerror=()=>rej(new Error("Falha ao carregar "+src));document.head.appendChild(s);
+  });
+}
+function setProg(t){document.getElementById("aprog").textContent=t||"";}
+function byId7(d){return DATA.find(v=>v.id===d);}
+function extractCnaes(text){
+  const found=[];
+  const push=(raw,pos)=>{found.push({raw,pos});};
+  let m;
+  const reF=/\b(\d{2})\s*[.\-–—]?\s*(\d{2})\s*[.\-–—]?\s*(\d)\s*[.\-–—]?\s*(\d{2})\b/g;
+  while((m=reF.exec(text))){push(m[1]+m[2]+m[3]+m[4],m.index);}
+  const re7=/(?<!\d)(\d{7})(?!\d)/g;
+  while((m=re7.exec(text))){if(byId7(m[1]))push(m[1],m.index);}
+  const seen=new Set(),out=[];
+  for(const f of found){if(!seen.has(f.raw)){seen.add(f.raw);out.push(f);}}
+  return out.sort((a,b)=>a.pos-b.pos);
+}
+async function textFromPdf(buf){
+  if(typeof pdfjsLib==="undefined")await loadScriptOnce("pdf.min.js");
+  if(pdfjsLib.GlobalWorkerOptions&&!pdfjsLib.GlobalWorkerOptions.workerSrc)pdfjsLib.GlobalWorkerOptions.workerSrc="pdf.worker.min.js";
+  const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+  let txt="";
+  const n=Math.min(pdf.numPages,10);
+  for(let p=1;p<=n;p++){
+    const pg=await pdf.getPage(p);
+    const tc=await pg.getTextContent();
+    txt+=tc.items.map(i=>i.str).join("\n")+"\n";
+  }
+  if(txt.trim().length<50){
+    const pg=await pdf.getPage(1);
+    const vp=pg.getViewport({scale:2});
+    const cv=document.createElement("canvas");cv.width=vp.width;cv.height=vp.height;
+    await pg.render({canvasContext:cv.getContext("2d"),viewport:vp}).promise;
+    const blob=await new Promise(r=>cv.toBlob(r,"image/png"));
+    txt=await textFromImage(blob);
+  }
+  return txt;
+}
+async function textFromImage(file){
+  setProg("Carregando OCR (primeira vez demora um pouco)…");
+  if(typeof Tesseract==="undefined")await loadScriptOnce("https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js");
+  const r=await Tesseract.recognize(file,"por",{logger:pg=>{if(pg.status==="recognizing text")setProg("Lendo imagem… "+Math.round((pg.progress||0)*100)+"%");}});
+  return (r&&r.data&&r.data.text)||"";
+}
+function splitSections(text){
+  const iP=text.search(/ATIVIDADE\s*ECON[OÔ]MICA\s*PRINCIPAL/i);
+  const iS=text.search(/SECUND[AÁ]RIAS?/i);
+  return {iP,iS};
+}
+function companyInfo(text){
+  const out={cnpj:"",razao:""};
+  const mc=text.match(/\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}/);
+  if(mc)out.cnpj=mc[0];
+  const mr=text.match(/NOME\s*EMPRESARIAL\s*\n?\s*([^\n]{3,80})/i);
+  if(mr)out.razao=mr[1].replace(/[*_#]/g,"").trim();
+  return out;
+}
+function analyzeText(text,fname){
+  const codes=extractCnaes(text);
+  const box=document.getElementById("aout");
+  if(!codes.length){box.innerHTML='<div class="verdict warn"><b class="t">Nenhum CNAE encontrado</b> em '+fname+'. Verifique se o arquivo contém códigos no formato 00.00-0-00.</div>';setProg("");return;}
+  const {iP,iS}=splitSections(text);
+  const info=companyInfo(text);
+  const rows=codes.map(c=>{
+    const x=byId7(c.raw);
+    const papel=(iS>=0&&c.pos>iS)?"Secundária":((iP>=0&&c.pos>iP)?"Principal":"Identificada");
+    return {cnae:c.raw,papel,x};
+  });
+  const ved=rows.filter(r=>r.x&&r.x.status==="VEDADO");
+  const amb=rows.filter(r=>r.x&&r.x.status==="AMBIGUO");
+  const unk=rows.filter(r=>!r.x);
+  const known=rows.filter(r=>r.x);
+  const meiOk=known.filter(r=>r.x.mei==="SIM");
+  const anxSet=new Set();
+  rows.forEach(r=>{if(r.x&&r.x.anexos)r.x.anexos.split(",").forEach(a=>anxSet.add(a.trim()));});
+  const anx=[...anxSet].sort();
+  let vcls,vico,vtxt;
+  if(ved.length){vcls="no";vico="⛔";vtxt="<b>EMPRESA IMPEDIDA de optar pelo Simples Nacional</b> (art. 17, LC 123/2006) — atividade vedada: <b>"+ved.map(r=>fmtC(r.cnae)).join(", ")+"</b>.";}
+  else if(amb.length){vcls="warn";vico="⚠️";vtxt="<b>OPTANTE COM RESSALVA</b> — nenhuma atividade vedada, mas há <b>"+amb.length+"</b> atividade(s) de Anexo V sujeita(s) ao <b>Fator R</b> (folha ÷ receita ≥ 28% → Anexo III, senão V).";}
+  else{vcls="ok";vico="✅";vtxt="<b>EMPRESA OPTANTE pelo Simples Nacional</b> — todas as atividades permitem.";}
+  let html='<div class="noprint" style="text-align:right;margin-bottom:8px"><button class="btn ghost" onclick="window.print()">🖨️ Imprimir análise</button></div>';
+  html+='<div class="verdict '+vcls+'"><b class="t">'+vico+" "+(info.razao?info.razao+" ":"")+(info.cnpj?"· "+info.cnpj:"")+'</b><br>'+vtxt;
+  if(anx.length&&!ved.length)html+='<br>Anexo(s) da empresa: <b>'+anx.join(", ")+"</b> "+anx.map(a=>'<button class="btn" style="padding:4px 10px;font-size:12px;margin:2px" onclick="fillAnexo(\''+a+'\')">Simular '+a+"</button>").join("");
+  if(known.length&&meiOk.length===known.length)html+='<br>🧾 <b>Pode ser MEI</b> — todas as '+known.length+' atividade(s) constam no Anexo XI (DAS fixo).';
+  else if(meiOk.length)html+='<br>🧾 <b>Permite MEI apenas em:</b> '+meiOk.map(r=>fmtC(r.cnae)).join(", ")+" — com as demais atividades combinadas, a empresa <b>não</b> pode ser MEI.";
+  else if(known.length)html+='<br>🧾 Nenhuma atividade permite MEI.';
+  if(unk.length)html+='<br><small>Código(s) não localizado(s) na base 2.3: '+unk.map(r=>fmtC(r.cnae)).join(", ")+" — fora do veredito.</small>";
+  html+="</div>";
+  html+='<table class="minitab"><thead><tr><th>CNAE</th><th>Papel</th><th>Descrição</th><th>Situação</th><th>Anexo</th><th>MEI</th></tr></thead><tbody>'
+    +rows.map(r=>"<tr><td class=\"mono\">"+fmtC(r.cnae)+"</td><td>"+r.papel+"</td><td>"+(r.x?r.x.descricao:"<i>não encontrado</i>")+"</td><td>"+(r.x?pill(r.x.status):"—")+"</td><td>"+(r.x&&r.x.anexos?r.x.anexos:"—")+"</td><td>"+(r.x&&r.x.mei==="SIM"?"Sim":"—")+"</td></tr>").join("")+"</tbody></table>";
+  box.innerHTML=html;setProg("");
+  document.getElementById("printDate").textContent="Emitido em "+new Date().toLocaleString("pt-BR")+(info.razao?" · "+info.razao:"")+(info.cnpj?" · "+info.cnpj:"");
+}
+function fmtC(d){return d.length===7?d.slice(0,2)+"."+d.slice(2,4)+"-"+d.slice(4,5)+"-"+d.slice(5):d;}
+async function handleFile(f){
+  if(!f)return;
+  if(!DATA.length){setProg("Aguarde o carregamento da base e tente de novo.");return;}
+  const name=(f.name||"arquivo").toLowerCase();
+  setProg("Lendo "+f.name+"…");
+  document.getElementById("aout").innerHTML="";
+  try{
+    let text="";
+    if(name.endsWith(".txt")||name.endsWith(".text")||f.type.startsWith("text")){text=await f.text();}
+    else if(name.endsWith(".pdf")||f.type==="application/pdf"){setProg("Extraindo texto do PDF…");text=await textFromPdf(await f.arrayBuffer());}
+    else if(f.type.startsWith("image")||/\.(png|jpe?g|webp|bmp)$/.test(name)){text=await textFromImage(f);}
+    else{text=await f.text();}
+    setProg("Analisando CNAEs…");
+    analyzeText(text,f.name||"arquivo");
+  }catch(e){setProg("");document.getElementById("aout").innerHTML='<div class="verdict warn"><b class="t">Não foi possível ler o arquivo</b><br>'+(e&&e.message?e.message:"")+(location.protocol==="file:"?'<br>Dica: abra o site via servidor HTTP para usar PDF/imagem. TXT funciona em qualquer modo.':"")+"</div>";}
+}
+dz.addEventListener("click",()=>fin.click());
+dz.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();fin.click();}});
+["dragover","dragenter"].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add("over");}));
+["dragleave","drop"].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove("over");}));
+dz.addEventListener("drop",e=>{const f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];handleFile(f);});
+fin.addEventListener("change",()=>{handleFile(fin.files[0]);fin.value="";});
 </script>
 </body>
 </html>
