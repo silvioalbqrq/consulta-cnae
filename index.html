@@ -26,8 +26,9 @@ body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;ba
 .btn:hover{background:#1a2547}
 .btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
 .page{max-width:1280px;margin:0 auto;padding:18px 20px 48px}
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-@media(max-width:800px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media(max-width:1000px){.kpis{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:640px){.kpis{grid-template-columns:repeat(2,1fr)}}
 .kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:center;cursor:pointer;text-align:left;width:100%;font:inherit;color:inherit}
 .kpi:hover{border-color:var(--ind)}
 .kpi.on{border:2px solid var(--ind);padding:13px 15px}
@@ -57,7 +58,7 @@ tbody tr{cursor:pointer}
 tbody tr:hover{background:#f1f5f9}
 .mono{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap;color:var(--blue)}
 .pill{display:inline-block;font-size:11px;font-weight:800;border-radius:999px;padding:3px 10px;white-space:nowrap}
-.p-ok{background:var(--okbg);color:var(--ok)}.p-bad{background:var(--badbg);color:var(--bad)}.p-amb{background:var(--ambbg);color:var(--amb)}.p-des{background:var(--desbg);color:var(--des)}
+.p-ok{background:var(--okbg);color:var(--ok)}.p-bad{background:var(--badbg);color:var(--bad)}.p-amb{background:var(--ambbg);color:var(--amb)}.p-des{background:var(--desbg);color:var(--des)}.p-mei{background:#e8eefc;color:var(--blue);border:1px solid #bcd0f7}
 .tag{display:inline-block;background:#e8eefc;color:var(--blue);border-radius:6px;padding:1px 8px;font-size:12px;font-weight:700}
 .more{display:block;width:100%;border:0;background:none;padding:13px;font-size:13.5px;color:var(--blue);font-weight:700;cursor:pointer}
 .more:hover{background:#f1f5f9}
@@ -103,6 +104,7 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:6px 16px 30px}
     <button class="kpi" data-k="OPTANTE"><span class="ic i-o">✅</span><span><small>Optantes</small><b id="kO">—</b></span></button>
     <button class="kpi" data-k="AMBIGUO"><span class="ic i-a">⚠️</span><span><small>Ambíguos · Fator R</small><b id="kA">—</b></span></button>
     <button class="kpi" data-k="VEDADO"><span class="ic i-v">⛔</span><span><small>Vedados</small><b id="kV">—</b></span></button>
+    <button class="kpi" data-k="MEI"><span class="ic i-t">🧾</span><span><small>Permite MEI</small><b id="kM">—</b></span></button>
   </div>
 
   <div class="layout">
@@ -116,14 +118,14 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:6px 16px 30px}
       </div>
       <div class="fgroup"><h3>Anexo</h3><div id="fAnexo"></div></div>
       <div class="fgroup"><h3>Divisão</h3><select id="fDiv"><option value="">Todas as divisões</option></select></div>
-      <div class="fgroup"><label class="fitem"><input type="checkbox" id="fR"> Somente com Fator R</label></div>
+      <div class="fgroup"><label class="fitem"><input type="checkbox" id="fR"> Somente com Fator R</label><label class="fitem"><input type="checkbox" id="fMEI"> Somente MEI <span class="n" id="nM"></span></label></div>
       <button class="btn ghost" id="btnClear" style="width:100%">Limpar filtros</button>
     </aside>
 
     <div class="main">
       <div class="main-h"><b id="rcount">Carregando…</b><span>· clique na linha para abrir a ficha</span></div>
       <div style="overflow:auto;max-height:560px"><table>
-        <thead><tr><th>CNAE</th><th>Descrição</th><th>Situação</th><th>Anexos</th><th>Fator R</th></tr></thead>
+        <thead><tr><th>CNAE</th><th>Descrição</th><th>Situação</th><th>Anexos</th><th>Fator R</th><th>MEI</th></tr></thead>
         <tbody id="tb"></tbody>
       </table></div>
       <button class="more" id="btnMore">Mostrar mais</button>
@@ -150,7 +152,8 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:6px 16px 30px}
         <span class="pill p-ok">OPTANTE</span> permite Simples, anexo único.<br>
         <span class="pill p-amb">AMBÍGUO</span> permite, mas depende do <b>Fator R</b> (folha ÷ receita ≥ 28% → III, senão V) ou de análise.<br>
         <span class="pill p-bad">VEDADO</span> art. 17 — sem anexo.<br>
-        <span class="pill p-des">DESATIVADA</span> código 2.2 antigo — use o correspondente.<br><br>
+        <span class="pill p-des">DESATIVADA</span> código 2.2 antigo — use o correspondente.<br>
+        <span class="pill p-mei">MEI</span> ocupação do Anexo XI (Res. CGSN 140/2018) — permite MEI.<br><br>
         Exemplos: <b>4723-7/00</b> optante I · <b>6201-5/01</b> ambíguo V→III · <b>6911-7/01</b> optante IV · <b>3513-1/00</b> vedado.
       </div>
     </div>
@@ -169,12 +172,13 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:6px 16px 30px}
 const TAB={I:[[180000,4,0],[360000,7.3,5940],[720000,9.5,13860],[1800000,10.7,22500],[3600000,14.3,87300],[4800000,19,378000]],II:[[180000,4.5,0],[360000,7.8,5940],[720000,10,13860],[1800000,11.2,22500],[3600000,14.7,85500],[4800000,30,720000]],III:[[180000,6,0],[360000,11.2,9360],[720000,13.5,17640],[1800000,16,35640],[3600000,21,125640],[4800000,33,648000]],IV:[[180000,4.5,0],[360000,9,8100],[720000,10.2,12420],[1800000,14,39780],[3600000,22,183780],[4800000,33,828000]],V:[[180000,15.5,0],[360000,18,4500],[720000,19.5,12780],[1800000,20.5,25560],[3600000,23,62100],[4800000,30.5,540000]]};
 const norm=s=>(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
 const soDig=s=>(s||"").replace(/\D/g,"");
-let DATA=[],BASE={},st="",anexos=new Set(),div="",frOnly=false,limit=60;
+let DATA=[],BASE={},st="",anexos=new Set(),div="",frOnly=false,meiOnly=false,limit=60;
 function boot(cls,mini){
   DATA=cls||[];BASE=mini||{};
   const c=s=>DATA.filter(x=>x.status===s).length;
-  kT.textContent=DATA.length;kO.textContent=c("OPTANTE");kA.textContent=c("AMBIGUO");kV.textContent=c("VEDADO");
-  nAll.textContent=DATA.length;nO.textContent=c("OPTANTE");nA.textContent=c("AMBIGUO");nV.textContent=c("VEDADO");
+  const m=DATA.filter(x=>x.mei==="SIM").length;
+  kT.textContent=DATA.length;kO.textContent=c("OPTANTE");kA.textContent=c("AMBIGUO");kV.textContent=c("VEDADO");kM.textContent=m;
+  nAll.textContent=DATA.length;nO.textContent=c("OPTANTE");nA.textContent=c("AMBIGUO");nV.textContent=c("VEDADO");nM.textContent=m;
   const an=["I","II","III","IV","V"];
   fAnexo.innerHTML=an.map(a=>{const n=DATA.filter(x=>(x.anexos||"").split(",").includes(a)).length;return `<label class="fitem"><input type="checkbox" value="${a}"> Anexo ${a} <span class="n">${n}</span></label>`;}).join("");
   fAnexo.querySelectorAll("input").forEach(i=>i.addEventListener("change",()=>{anexos=new Set([...fAnexo.querySelectorAll("input:checked")].map(x=>x.value));limit=60;render();}));
@@ -198,12 +202,13 @@ function filtrados(){
   if(anexos.size)arr=arr.filter(x=>(x.anexos||"").split(",").some(a=>anexos.has(a)));
   if(div)arr=arr.filter(x=>x.divisao===div);
   if(frOnly)arr=arr.filter(x=>x.fatorR==="SIM");
+  if(meiOnly)arr=arr.filter(x=>x.mei==="SIM");
   return arr;
 }
 function render(){
   const arr=filtrados();
   rcount.innerHTML="<b>"+arr.length+"</b> resultado(s)";
-  tb.innerHTML=arr.slice(0,limit).map(x=>`<tr data-id="${x.id}"><td class="mono">${x.cnae}</td><td>${x.descricao}<div style="font-size:11.5px;color:var(--mut)">Divisão ${x.divisao}</div></td><td>${pill(x.status)}</td><td>${x.anexos?x.anexos.split(",").map(a=>`<span class="tag">${a}</span>`).join(" "):"—"}</td><td>${x.fatorR==="SIM"?"Sim":"—"}</td></tr>`).join("")||'<tr><td colspan="5"><div class="empty">Nenhum resultado. Ajuste a busca ou limpe os filtros.</div></td></tr>';
+  tb.innerHTML=arr.slice(0,limit).map(x=>`<tr data-id="${x.id}"><td class="mono">${x.cnae}</td><td>${x.descricao}<div style="font-size:11.5px;color:var(--mut)">Divisão ${x.divisao}</div></td><td>${pill(x.status)}</td><td>${x.anexos?x.anexos.split(",").map(a=>`<span class="tag">${a}</span>`).join(" "):"—"}</td><td>${x.fatorR==="SIM"?"Sim":"—"}</td><td>${x.mei==="SIM"?'<span class="pill p-mei">MEI</span>':"—"}</td></tr>`).join("")||'<tr><td colspan="6"><div class="empty">Nenhum resultado. Ajuste a busca ou limpe os filtros.</div></td></tr>';
   btnMore.style.display=arr.length>limit?"block":"none";
   btnMore.textContent="Mostrar mais ("+(arr.length-limit)+" restantes)";
   tb.querySelectorAll("tr[data-id]").forEach(r=>r.addEventListener("click",()=>openD(r.dataset.id)));
@@ -211,11 +216,13 @@ function render(){
 function openD(id){
   const x=DATA.find(v=>v.id===id);if(!x)return;
   const b=BASE[id],notas=b?((b.obs||b.o)||[]).slice(0,2):[];
-  dCode.textContent=x.cnae+" · Divisão "+x.divisao;dDesc.textContent=x.descricao;dPill.innerHTML=pill(x.status);
+  const ocups=(x.mei_ocup||[]).filter(Boolean);
+  dCode.textContent=x.cnae+" · Divisão "+x.divisao;dDesc.textContent=x.descricao;dPill.innerHTML=pill(x.status)+(x.mei==="SIM"?' <span class="pill p-mei">MEI</span>':"");
   dBody.innerHTML=`<div class="kv"><b>Anexos</b><span>${x.anexos||"— (vedado)"}</span><b>Fator R</b><span>${x.fatorR==="SIM"?"Sim — folha ÷ receita ≥ 28% → III, senão V":"Não"}</span><b>Motivo</b><span>${x.motivo} (${x.origem})</span></div>`
   +(x.fatorR==="SIM"?'<div class="alert y"><b>Ambíguo / Fator R.</b> Calcule na seção Simulador.</div>':"")
   +(x.status==="VEDADO"?'<div class="alert r"><b>Vedado</b> (art. 17, LC 123/2006). Sem anexo.</div>':"")
   +(x.status==="DESATIVADA"?'<div class="alert y"><b>Código 2.2 desativado.</b> Use o correspondente.</div>':"")
+  +(x.mei==="SIM"?'<div class="alert y"><b>Permite MEI</b> (Anexo XI, Res. CGSN 140/2018)'+(x.mei_iss?` · ISS no DAS: <b>${x.mei_iss==="S"?"sim":"não"}</b>`:"")+'.'+(ocups.length?'<br><b>Ocupações:</b> '+ocups.join(" · "):"")+'</div>':"")
   +(notas.length?'<div style="margin-top:10px;color:var(--mut)"><b>Notas IBGE</b><br>'+notas.join("<br>")+'</div>':"");
   document.body.classList.add("dopen");
 }
@@ -225,16 +232,19 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape")closeD();});
 let t=null;q.addEventListener("input",()=>{clearTimeout(t);t=setTimeout(()=>{limit=60;render();},130);});
 document.querySelectorAll(".kpi").forEach(k=>k.addEventListener("click",()=>{
   document.querySelectorAll(".kpi").forEach(x=>x.classList.remove("on"));k.classList.add("on");
-  st=k.dataset.k;document.querySelector(`#fStatus input[value="${st}"]`).checked=true;limit=60;render();
+  if(k.dataset.k==="MEI"){st="";meiOnly=true;document.querySelector('#fStatus input[value=""]').checked=true;fMEI.checked=true;}
+  else{st=k.dataset.k;meiOnly=false;fMEI.checked=false;document.querySelector(`#fStatus input[value="${st}"]`).checked=true;}
+  limit=60;render();
 }));
 fStatus.addEventListener("change",e=>{st=e.target.value;document.querySelectorAll(".kpi").forEach(x=>x.classList.toggle("on",x.dataset.k===st));limit=60;render();});
 fDiv.addEventListener("change",e=>{div=e.target.value;limit=60;render();});
 fR.addEventListener("change",e=>{frOnly=e.target.checked;limit=60;render();});
+fMEI.addEventListener("change",e=>{meiOnly=e.target.checked;if(meiOnly){document.querySelectorAll(".kpi").forEach(x=>x.classList.toggle("on",x.dataset.k==="MEI"));}limit=60;render();});
 btnMore.onclick=()=>{limit+=120;render();};
-btnClear.onclick=()=>{st="";anexos.clear();div="";frOnly=false;q.value="";fDiv.value="";fR.checked=false;document.querySelector('#fStatus input[value=""]').checked=true;fAnexo.querySelectorAll("input").forEach(i=>i.checked=false);document.querySelectorAll(".kpi").forEach((x,i)=>x.classList.toggle("on",i===0));limit=60;render();};
+btnClear.onclick=()=>{st="";anexos.clear();div="";frOnly=false;meiOnly=false;q.value="";fDiv.value="";fR.checked=false;fMEI.checked=false;document.querySelector('#fStatus input[value=""]').checked=true;fAnexo.querySelectorAll("input").forEach(i=>i.checked=false);document.querySelectorAll(".kpi").forEach((x,i)=>x.classList.toggle("on",i===0));limit=60;render();};
 btnCsv.onclick=()=>{
   const arr=filtrados();
-  const csv="cnae;descricao;divisao;status;anexos;fatorR;motivo\n"+arr.map(x=>[x.cnae,'"'+x.descricao.replace(/"/g,'""')+'"',x.divisao,x.status,x.anexos,x.fatorR,'"'+(x.motivo||"").replace(/"/g,'""')+'"'].join(";")).join("\n");
+  const csv="cnae;descricao;divisao;status;anexos;fatorR;mei;mei_iss;mei_ocupacoes;motivo\n"+arr.map(x=>[x.cnae,'"'+x.descricao.replace(/"/g,'""')+'"',x.divisao,x.status,x.anexos,x.fatorR,x.mei||"",x.mei_iss||"",'"'+((x.mei_ocup||[]).join(" | ")).replace(/"/g,'""')+'"','"'+(x.motivo||"").replace(/"/g,'""')+'"'].join(";")).join("\n");
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv"}));a.download="consulta-cnae.csv";a.click();
 };
 const BRL=v=>v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});

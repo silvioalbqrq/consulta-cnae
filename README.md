@@ -1,6 +1,11 @@
 # Consulta CNAE — Enquadramento no Simples Nacional
 
-Dashboard moderno: barra de busca global, KPIs clicáveis, filtros laterais (situação/anexo/divisão/Fator R), tabela de resultados com ficha em painel lateral, exportação CSV e simulador de alíquota.
+Dashboard moderno: barra de busca global, KPIs clicáveis (total/optantes/ambíguos/vedados/MEI), filtros laterais (situação/anexo/divisão/Fator R/MEI), tabela de resultados com ficha em painel lateral, exportação CSV e simulador de alíquota.
+
+## MEI (Anexo XI, Res. CGSN 140/2018, Tabelas A e B)
+- 471 ocupações → **351 CNAEs** (`mei_cnaes.json`), todos presentes na base 2.3
+- 343 OPTANTE + 8 AMBÍGUO (Anexo V, Fator R não se aplica ao DAS fixo do MEI); 3 exceções aplicadas sobre a regra geral (1220-4/99 fumo, 4929-9/02 fretamento metropolitano, 9700-5/00 diarista)
+- Selo MEI na tabela e na ficha (ocupações + ISS no DAS) + filtro "Somente MEI" + CSV com colunas mei/mei_iss/mei_ocupacoes
 
 ## Arquivos
 - `index.html` — painel VMF (consulta unificada + análise + simulador)
