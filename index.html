@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consulta CNAE — Dashboard de Enquadramento no Simples Nacional</title>
+<style>
+:root{
+  --navy:#0b132b; --navy2:#111c34; --blue:#1d4ed8; --pinkbg:#fce7f3; --pink:#db2777;
+  --bg:#f3f4f6; --card:#ffffff; --line:#e6e8ee; --txt:#111827; --mut:#6b7280;
+  --ind:#0b132b; --ind-d:#1a2547; --ok:#16a34a; --okbg:#dcfce7;
+  --bad:#dc2626; --badbg:#fee2e2; --amb:#b45309; --ambbg:#fef3c7; --des:#64748b; --desbg:#e2e8f0;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;background:var(--bg);color:var(--txt)}
+.top{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,var(--navy),var(--navy2));border-bottom:1px solid var(--navy);color:#fff}
+.topin{max-width:1280px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px;white-space:nowrap;color:#fff}
+.logo .mk{width:34px;height:34px;border-radius:9px;background:var(--pinkbg);color:var(--pink);display:grid;place-items:center;font-size:16px;font-weight:900}
+.logo small{display:block;font-size:11px;color:#9aa6c2;font-weight:400}
+.gsearch{flex:1;min-width:220px;display:flex;align-items:center;gap:8px;border:1px solid transparent;border-radius:10px;padding:9px 13px;background:#fff;color:var(--txt)}
+.gsearch:focus-within{box-shadow:0 0 0 2px var(--blue)}
+.gsearch input{border:0;outline:0;background:transparent;flex:1;font-size:14px;color:var(--txt)}
+.gsearch input::placeholder{color:#9ca3af}
+.btn{background:var(--navy2);color:#fff;border:0;border-radius:9px;padding:9px 16px;font-weight:700;font-size:13.5px;cursor:pointer;white-space:nowrap}
+.btn:hover{background:#1a2547}
+.btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.page{max-width:1280px;margin:0 auto;padding:18px 20px 48px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:800px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:center;cursor:pointer;text-align:left;width:100%;font:inherit;color:inherit}
+.kpi:hover{border-color:var(--ind)}
+.kpi.on{border:2px solid var(--ind);padding:13px 15px}
+.kpi .ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:19px;flex:none}
+.kpi small{color:var(--mut);font-size:12px;display:block}
+.kpi b{font-size:23px;line-height:1.2}
+.i-t{background:#e0e7ff}.i-o{background:var(--okbg)}.i-a{background:var(--ambbg)}.i-v{background:var(--badbg)}
+.layout{display:grid;grid-template-columns:250px 1fr;gap:14px;margin-top:14px;align-items:start}
+@media(max-width:900px){.layout{grid-template-columns:1fr}}
+.side{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;position:sticky;top:76px}
+@media(max-width:900px){.side{position:static}}
+.side h3{margin:0 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--mut)}
+.fgroup{border-bottom:1px solid var(--line);padding:10px 0}
+.fgroup:last-child{border:0}
+.fitem{display:flex;align-items:center;gap:9px;padding:6px 4px;font-size:13.5px;cursor:pointer;border-radius:8px}
+.fitem:hover{background:#f8fafc}
+.fitem input{accent-color:var(--ind);width:15px;height:15px}
+.fitem .n{margin-left:auto;font-size:11.5px;color:var(--mut);background:#f1f5f9;border-radius:6px;padding:1px 7px}
+.side select{width:100%;padding:9px;border:1px solid var(--line);border-radius:9px;font-size:13.5px;margin-top:4px}
+.main{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.main-h{padding:13px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--mut);flex-wrap:wrap}
+.main-h b{color:var(--txt)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);padding:10px 12px;border-bottom:1px solid var(--line);background:#f8fafc;position:sticky;top:0}
+td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:#f1f5f9}
+.mono{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap;color:var(--blue)}
+.pill{display:inline-block;font-size:11px;font-weight:800;border-radius:999px;padding:3px 10px;white-space:nowrap}
+.p-ok{background:var(--okbg);color:var(--ok)}.p-bad{background:var(--badbg);color:var(--bad)}.p-amb{background:var(--ambbg);color:var(--amb)}.p-des{background:var(--desbg);color:var(--des)}
+.tag{display:inline-block;background:#e8eefc;color:var(--blue);border-radius:6px;padding:1px 8px;font-size:12px;font-weight:700}
+.more{display:block;width:100%;border:0;background:none;padding:13px;font-size:13.5px;color:var(--blue);font-weight:700;cursor:pointer}
+.more:hover{background:#f1f5f9}
+.empty{padding:30px;text-align:center;color:var(--mut);font-size:14px}
+.drawer-veil{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:40;display:none}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(430px,94vw);background:#fff;z-index:41;box-shadow:-12px 0 40px rgba(0,0,0,.2);transform:translateX(105%);transition:transform .22s ease;display:flex;flex-direction:column}
+body.dopen .drawer{transform:none}
+body.dopen .drawer-veil{display:block}
+.drawer-h{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:flex-start}
+.drawer-h .t{flex:1}
+.drawer-h .t small{color:var(--blue,var(--ind));font-weight:700}
+.drawer-h .t b{display:block;font-size:17px;margin-top:2px}
+.drawer-x{border:0;background:#f1f5f9;border-radius:8px;width:32px;height:32px;font-size:16px;cursor:pointer;flex:none}
+.drawer-b{padding:16px 18px;overflow:auto;font-size:13.5px;line-height:1.6}
+.kv{display:grid;grid-template-columns:96px 1fr;gap:7px 10px;margin:10px 0}
+.kv b{color:var(--mut);font-weight:600}
+.alert{border-radius:10px;padding:10px 12px;margin-top:10px;font-size:13px}
+.alert.y{background:#fffbeb;border:1px solid #f5d78a}
+.alert.r{background:#fef2f2;border:1px solid #fca5a5}
+.cards2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+@media(max-width:900px){.cards2{grid-template-columns:1fr}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.panel h2{margin:0 0 4px;font-size:16px}
+.panel p.sub{margin:0 0 12px;color:var(--mut);font-size:13px}
+.calc4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:640px){.calc4{grid-template-columns:1fr 1fr}}
+label{font-size:12px;color:var(--mut);display:block;margin-bottom:5px}
+input.num,select.num{width:100%;padding:10px;border:1px solid var(--line);border-radius:9px;font-size:14px}
+.result{background:var(--navy);color:#fff;border-radius:10px;padding:12px;margin-top:12px;font-size:14px}
+footer{text-align:center;color:var(--mut);font-size:12px;padding:6px 16px 30px}
+</style>
+</head>
+<body>
+<header class="top"><div class="topin">
+  <div class="logo"><span class="mk">▦</span><span>Consulta CNAE<small>Simples Nacional · LC 123/2006 · 2026</small></span></div>
+  <div class="gsearch">🔍<input id="q" placeholder="Buscar CNAE ou atividade… (ex: 4541206, bebidas, software)" autocomplete="off"></div>
+  <button class="btn ghost" id="btnCsv">Exportar</button>
+</div></header>
+
+<div class="page">
+  <div class="kpis">
+    <button class="kpi on" data-k=""><span class="ic i-t">📁</span><span><small>Base total</small><b id="kT">—</b></span></button>
+    <button class="kpi" data-k="OPTANTE"><span class="ic i-o">✅</span><span><small>Optantes</small><b id="kO">—</b></span></button>
+    <button class="kpi" data-k="AMBIGUO"><span class="ic i-a">⚠️</span><span><small>Ambíguos · Fator R</small><b id="kA">—</b></span></button>
+    <button class="kpi" data-k="VEDADO"><span class="ic i-v">⛔</span><span><small>Vedados</small><b id="kV">—</b></span></button>
+  </div>
+
+  <div class="layout">
+    <aside class="side">
+      <h3>Filtros</h3>
+      <div class="fgroup" id="fStatus">
+        <label class="fitem"><input type="radio" name="st" value="" checked> Todas <span class="n" id="nAll"></span></label>
+        <label class="fitem"><input type="radio" name="st" value="OPTANTE"> Optantes <span class="n" id="nO"></span></label>
+        <label class="fitem"><input type="radio" name="st" value="AMBIGUO"> Ambíguos <span class="n" id="nA"></span></label>
+        <label class="fitem"><input type="radio" name="st" value="VEDADO"> Vedados <span class="n" id="nV"></span></label>
+      </div>
+      <div class="fgroup"><h3>Anexo</h3><div id="fAnexo"></div></div>
+      <div class="fgroup"><h3>Divisão</h3><select id="fDiv"><option value="">Todas as divisões</option></select></div>
+      <div class="fgroup"><label class="fitem"><input type="checkbox" id="fR"> Somente com Fator R</label></div>
+      <button class="btn ghost" id="btnClear" style="width:100%">Limpar filtros</button>
+    </aside>
+
+    <div class="main">
+      <div class="main-h"><b id="rcount">Carregando…</b><span>· clique na linha para abrir a ficha</span></div>
+      <div style="overflow:auto;max-height:560px"><table>
+        <thead><tr><th>CNAE</th><th>Descrição</th><th>Situação</th><th>Anexos</th><th>Fator R</th></tr></thead>
+        <tbody id="tb"></tbody>
+      </table></div>
+      <button class="more" id="btnMore">Mostrar mais</button>
+    </div>
+  </div>
+
+  <div class="cards2">
+    <div class="panel">
+      <h2>Simulador de alíquota efetiva</h2>
+      <p class="sub">LC 155/2016 · Efetiva = [(RBT12 × nominal) − dedução] ÷ RBT12</p>
+      <div class="calc4">
+        <div><label>RBT12 (R$)</label><input class="num" id="rbt" type="number" value="250000"></div>
+        <div><label>Mês (R$)</label><input class="num" id="mes" type="number" value="25000"></div>
+        <div><label>Folha 12m (R$)</label><input class="num" id="folha" type="number" value="80000"></div>
+        <div><label>Anexo</label><select class="num" id="anexo"><option>I</option><option>II</option><option selected>III</option><option>IV</option><option>V</option></select></div>
+      </div>
+      <div style="margin-top:10px"><button class="btn" id="btnCalc">Calcular</button></div>
+      <div class="result" id="out">—</div>
+    </div>
+    <div class="panel">
+      <h2>Como ler o dashboard</h2>
+      <p class="sub">Fonte: Subclasses 2.3 × IBGE · LC 123/147/155 · CGSN 140/2018</p>
+      <div style="font-size:13.5px;line-height:1.7">
+        <span class="pill p-ok">OPTANTE</span> permite Simples, anexo único.<br>
+        <span class="pill p-amb">AMBÍGUO</span> permite, mas depende do <b>Fator R</b> (folha ÷ receita ≥ 28% → III, senão V) ou de análise.<br>
+        <span class="pill p-bad">VEDADO</span> art. 17 — sem anexo.<br>
+        <span class="pill p-des">DESATIVADA</span> código 2.2 antigo — use o correspondente.<br><br>
+        Exemplos: <b>4723-7/00</b> optante I · <b>6201-5/01</b> ambíguo V→III · <b>6911-7/01</b> optante IV · <b>3513-1/00</b> vedado.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="drawer-veil" id="veil"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-h"><div class="t"><small id="dCode"></small><b id="dDesc"></b><span id="dPill"></span></div><button class="drawer-x" id="dClose">✕</button></div>
+  <div class="drawer-b" id="dBody"></div>
+</aside>
+<footer>Consulta CNAE · apoio à decisão — valide com contador, contrato social, código municipal e PGDAS</footer>
+
+<script src="dados.js"></script>
+<script>
+const TAB={I:[[180000,4,0],[360000,7.3,5940],[720000,9.5,13860],[1800000,10.7,22500],[3600000,14.3,87300],[4800000,19,378000]],II:[[180000,4.5,0],[360000,7.8,5940],[720000,10,13860],[1800000,11.2,22500],[3600000,14.7,85500],[4800000,30,720000]],III:[[180000,6,0],[360000,11.2,9360],[720000,13.5,17640],[1800000,16,35640],[3600000,21,125640],[4800000,33,648000]],IV:[[180000,4.5,0],[360000,9,8100],[720000,10.2,12420],[1800000,14,39780],[3600000,22,183780],[4800000,33,828000]],V:[[180000,15.5,0],[360000,18,4500],[720000,19.5,12780],[1800000,20.5,25560],[3600000,23,62100],[4800000,30.5,540000]]};
+const norm=s=>(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+const soDig=s=>(s||"").replace(/\D/g,"");
+let DATA=[],BASE={},st="",anexos=new Set(),div="",frOnly=false,limit=60;
+function boot(cls,mini){
+  DATA=cls||[];BASE=mini||{};
+  const c=s=>DATA.filter(x=>x.status===s).length;
+  kT.textContent=DATA.length;kO.textContent=c("OPTANTE");kA.textContent=c("AMBIGUO");kV.textContent=c("VEDADO");
+  nAll.textContent=DATA.length;nO.textContent=c("OPTANTE");nA.textContent=c("AMBIGUO");nV.textContent=c("VEDADO");
+  const an=["I","II","III","IV","V"];
+  fAnexo.innerHTML=an.map(a=>{const n=DATA.filter(x=>(x.anexos||"").split(",").includes(a)).length;return `<label class="fitem"><input type="checkbox" value="${a}"> Anexo ${a} <span class="n">${n}</span></label>`;}).join("");
+  fAnexo.querySelectorAll("input").forEach(i=>i.addEventListener("change",()=>{anexos=new Set([...fAnexo.querySelectorAll("input:checked")].map(x=>x.value));limit=60;render();}));
+  const divs=[...new Set(DATA.map(x=>x.divisao))].sort();
+  fDiv.innerHTML='<option value="">Todas as divisões</option>'+divs.map(d=>`<option value="${d}">Divisão ${d}</option>`).join("");
+  render();
+}
+if(window.RADAR_DATA&&window.RADAR_DATA.length){boot(window.RADAR_DATA,window.RADAR_BASE||{});}
+else{fetch("classificacao_simples_23.json").then(r=>r.json()).then(cls=>boot(cls,{}));}
+function pill(s){if(s==="DESATIVADA")return '<span class="pill p-des">DESATIVADA</span>';if(s==="OPTANTE")return '<span class="pill p-ok">OPTANTE</span>';if(s==="VEDADO")return '<span class="pill p-bad">VEDADO</span>';return '<span class="pill p-amb">AMBÍGUO</span>';}
+function filtrados(){
+  const q=norm(document.getElementById("q").value.trim()),d=soDig(q);
+  let arr=DATA;
+  if(d.length>=2&&/\d/.test(q)){arr=arr.filter(x=>x.id.includes(d));}
+  else if(q.length>=3){
+    const SIN={venda:"comercio",carro:"veiculo",advocacia:"advocat",ti:"tecnologia",software:"programa",medico:"medic"};
+    const termos=q.split(/\s+/).map(t=>SIN[t]||t).map(t=>t.length>6?t.slice(0,6):t);
+    arr=arr.map(x=>{const b=BASE[x.id];const h=norm(x.descricao+" "+(((b&&(b.a||b.ativ))||[]).join(" ")));let s=0;const ok=termos.every(t=>{if(h.includes(t)){s+=t.length;return true;}return false;});return ok?{x,s}:null;}).filter(Boolean).sort((a,b)=>b.s-a.s).map(o=>o.x);
+  }
+  if(st)arr=arr.filter(x=>x.status===st);
+  if(anexos.size)arr=arr.filter(x=>(x.anexos||"").split(",").some(a=>anexos.has(a)));
+  if(div)arr=arr.filter(x=>x.divisao===div);
+  if(frOnly)arr=arr.filter(x=>x.fatorR==="SIM");
+  return arr;
+}
+function render(){
+  const arr=filtrados();
+  rcount.innerHTML="<b>"+arr.length+"</b> resultado(s)";
+  tb.innerHTML=arr.slice(0,limit).map(x=>`<tr data-id="${x.id}"><td class="mono">${x.cnae}</td><td>${x.descricao}<div style="font-size:11.5px;color:var(--mut)">Divisão ${x.divisao}</div></td><td>${pill(x.status)}</td><td>${x.anexos?x.anexos.split(",").map(a=>`<span class="tag">${a}</span>`).join(" "):"—"}</td><td>${x.fatorR==="SIM"?"Sim":"—"}</td></tr>`).join("")||'<tr><td colspan="5"><div class="empty">Nenhum resultado. Ajuste a busca ou limpe os filtros.</div></td></tr>';
+  btnMore.style.display=arr.length>limit?"block":"none";
+  btnMore.textContent="Mostrar mais ("+(arr.length-limit)+" restantes)";
+  tb.querySelectorAll("tr[data-id]").forEach(r=>r.addEventListener("click",()=>openD(r.dataset.id)));
+}
+function openD(id){
+  const x=DATA.find(v=>v.id===id);if(!x)return;
+  const b=BASE[id],notas=b?((b.obs||b.o)||[]).slice(0,2):[];
+  dCode.textContent=x.cnae+" · Divisão "+x.divisao;dDesc.textContent=x.descricao;dPill.innerHTML=pill(x.status);
+  dBody.innerHTML=`<div class="kv"><b>Anexos</b><span>${x.anexos||"— (vedado)"}</span><b>Fator R</b><span>${x.fatorR==="SIM"?"Sim — folha ÷ receita ≥ 28% → III, senão V":"Não"}</span><b>Motivo</b><span>${x.motivo} (${x.origem})</span></div>`
+  +(x.fatorR==="SIM"?'<div class="alert y"><b>Ambíguo / Fator R.</b> Calcule na seção Simulador.</div>':"")
+  +(x.status==="VEDADO"?'<div class="alert r"><b>Vedado</b> (art. 17, LC 123/2006). Sem anexo.</div>':"")
+  +(x.status==="DESATIVADA"?'<div class="alert y"><b>Código 2.2 desativado.</b> Use o correspondente.</div>':"")
+  +(notas.length?'<div style="margin-top:10px;color:var(--mut)"><b>Notas IBGE</b><br>'+notas.join("<br>")+'</div>':"");
+  document.body.classList.add("dopen");
+}
+function closeD(){document.body.classList.remove("dopen");}
+dClose.onclick=closeD;veil.onclick=closeD;
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeD();});
+let t=null;q.addEventListener("input",()=>{clearTimeout(t);t=setTimeout(()=>{limit=60;render();},130);});
+document.querySelectorAll(".kpi").forEach(k=>k.addEventListener("click",()=>{
+  document.querySelectorAll(".kpi").forEach(x=>x.classList.remove("on"));k.classList.add("on");
+  st=k.dataset.k;document.querySelector(`#fStatus input[value="${st}"]`).checked=true;limit=60;render();
+}));
+fStatus.addEventListener("change",e=>{st=e.target.value;document.querySelectorAll(".kpi").forEach(x=>x.classList.toggle("on",x.dataset.k===st));limit=60;render();});
+fDiv.addEventListener("change",e=>{div=e.target.value;limit=60;render();});
+fR.addEventListener("change",e=>{frOnly=e.target.checked;limit=60;render();});
+btnMore.onclick=()=>{limit+=120;render();};
+btnClear.onclick=()=>{st="";anexos.clear();div="";frOnly=false;q.value="";fDiv.value="";fR.checked=false;document.querySelector('#fStatus input[value=""]').checked=true;fAnexo.querySelectorAll("input").forEach(i=>i.checked=false);document.querySelectorAll(".kpi").forEach((x,i)=>x.classList.toggle("on",i===0));limit=60;render();};
+btnCsv.onclick=()=>{
+  const arr=filtrados();
+  const csv="cnae;descricao;divisao;status;anexos;fatorR;motivo\n"+arr.map(x=>[x.cnae,'"'+x.descricao.replace(/"/g,'""')+'"',x.divisao,x.status,x.anexos,x.fatorR,'"'+(x.motivo||"").replace(/"/g,'""')+'"'].join(";")).join("\n");
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv"}));a.download="consulta-cnae.csv";a.click();
+};
+const BRL=v=>v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+function calc(){
+  const rbt=+rbtEl.value||0,mes=+mesEl.value||0,fol=+folhaEl.value||0,an=anexoEl.value;let ex="";
+  if(an==="V"&&rbt>0){const fr=fol/rbt;ex=" · Fator R "+(fr*100).toFixed(1)+"% "+(fr>=.28?"→ sugere III":"→ fica no V");}
+  const f=TAB[an].find(x=>rbt<=x[0])||TAB[an][5];
+  const ef=rbt>0?((rbt*f[1]/100-f[2])/rbt*100):0;
+  out.innerHTML="Anexo <b>"+an+"</b> · nominal "+f[1]+"% − "+BRL(f[2])+" · <b>efetiva "+ef.toFixed(2)+"%</b> · DAS ≈ <b>"+BRL(mes*ef/100)+"</b>"+ex+(an==="IV"?" · +CPP fora":"");
+}
+const rbtEl=document.getElementById("rbt"),mesEl=document.getElementById("mes"),folhaEl=document.getElementById("folha"),anexoEl=document.getElementById("anexo");
+btnCalc.onclick=calc;calc();
+</script>
+</body>
+</html>
