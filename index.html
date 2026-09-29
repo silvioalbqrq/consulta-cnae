@@ -232,6 +232,7 @@ const TAB={I:[[180000,4,0],[360000,7.3,5940],[720000,9.5,13860],[1800000,10.7,22
 const norm=s=>(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
 const soDig=s=>(s||"").replace(/\D/g,"");
 const BRL=v=>v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 let DATA=[],BASE={},st="",anexos=new Set(),div="",frOnly=false,meiOnly=false,limit=60;
 const toast=document.getElementById("toast");
 function showToast(msg){toast.textContent=msg;toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),2200);}
@@ -440,7 +441,7 @@ function companyInfo(text){
 function analyzeText(text,fname){
   const codes=extractCnaes(text);
   const box=document.getElementById("aout");
-  if(!codes.length){box.innerHTML='<div class="verdict warn"><b class="t">Nenhum CNAE encontrado</b> em '+fname+'. Verifique se o arquivo contém códigos no formato 00.00-0-00.</div>';setProg("");return;}
+  if(!codes.length){box.innerHTML='<div class="verdict warn"><b class="t">Nenhum CNAE encontrado</b> em '+esc(fname)+'. Verifique se o arquivo contém códigos no formato 00.00-0-00.</div>';setProg("");return;}
   const {iP,iS}=splitSections(text);
   const info=companyInfo(text);
   const rows=codes.map(c=>{
@@ -461,7 +462,7 @@ function analyzeText(text,fname){
   else if(amb.length){vcls="warn";vico="⚠️";vtxt="<b>OPTANTE COM RESSALVA</b> — nenhuma atividade vedada, mas há <b>"+amb.length+"</b> atividade(s) de Anexo V sujeita(s) ao <b>Fator R</b> (folha ÷ receita ≥ 28% → Anexo III, senão V).";}
   else{vcls="ok";vico="✅";vtxt="<b>EMPRESA OPTANTE pelo Simples Nacional</b> — todas as atividades permitem.";}
   let html='<div class="noprint" style="text-align:right;margin-bottom:8px"><button class="btn ghost" onclick="window.print()">🖨️ Imprimir análise</button></div>';
-  html+='<div class="verdict '+vcls+'"><b class="t">'+vico+" "+(info.razao?info.razao+" ":"")+(info.cnpj?"· "+info.cnpj:"")+'</b><br>'+vtxt;
+  html+='<div class="verdict '+vcls+'"><b class="t">'+vico+" "+(info.razao?esc(info.razao)+" ":"")+(info.cnpj?"· "+esc(info.cnpj):"")+'</b><br>'+vtxt;
   if(anx.length&&!ved.length)html+='<br>Anexo(s) da empresa: <b>'+anx.join(", ")+"</b> "+anx.map(a=>'<button class="btn" style="padding:4px 10px;font-size:12px;margin:2px" onclick="fillAnexo(\''+a+'\')">Simular '+a+"</button>").join("");
   if(known.length&&meiOk.length===known.length)html+='<br>🧾 <b>Pode ser MEI</b> — todas as '+known.length+' atividade(s) constam no Anexo XI (DAS fixo).';
   else if(meiOk.length)html+='<br>🧾 <b>Permite MEI apenas em:</b> '+meiOk.map(r=>fmtC(r.cnae)).join(", ")+" — com as demais atividades combinadas, a empresa <b>não</b> pode ser MEI.";
@@ -477,6 +478,8 @@ function fmtC(d){return d.length===7?d.slice(0,2)+"."+d.slice(2,4)+"-"+d.slice(4
 async function handleFile(f){
   if(!f)return;
   if(!DATA.length){setProg("Aguarde o carregamento da base e tente de novo.");return;}
+  const MAXB=15*1024*1024;
+  if(f.size&&f.size>MAXB){setProg("");document.getElementById("aout").innerHTML='<div class="verdict warn"><b class="t">Arquivo muito grande</b><br>Limite de 15 MB — comprima o PDF/imagem ou envie um TXT com os CNAEs.</div>';return;}
   const name=(f.name||"arquivo").toLowerCase();
   setProg("Lendo "+f.name+"…");
   document.getElementById("aout").innerHTML="";
@@ -488,7 +491,7 @@ async function handleFile(f){
     else{text=await f.text();}
     setProg("Analisando CNAEs…");
     analyzeText(text,f.name||"arquivo");
-  }catch(e){setProg("");document.getElementById("aout").innerHTML='<div class="verdict warn"><b class="t">Não foi possível ler o arquivo</b><br>'+(e&&e.message?e.message:"")+(location.protocol==="file:"?'<br>Dica: abra o site via servidor HTTP para usar PDF/imagem. TXT funciona em qualquer modo.':"")+"</div>";}
+  }catch(e){setProg("");document.getElementById("aout").innerHTML='<div class="verdict warn"><b class="t">Não foi possível ler o arquivo</b><br>'+esc(e&&e.message?e.message:"")+(location.protocol==="file:"?'<br>Dica: abra o site via servidor HTTP para usar PDF/imagem. TXT funciona em qualquer modo.':"")+"</div>";}
 }
 dz.addEventListener("click",()=>fin.click());
 dz.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();fin.click();}});
