@@ -21,6 +21,10 @@ MAP = {
 "6810201":{"a":["III"]},"6821801":{"a":["III"],"fatorR":True},"6911701":{"a":["IV"]},
 "6920601":{"a":["III"]},"7020400":{"a":["V"],"fatorR":True},
 "7111100":{"a":["III"],"fatorR":True},"7112000":{"a":["V"],"fatorR":True},"7311400":{"a":["V"],"fatorR":True},"7320300":{"a":["V"],"fatorR":True},
+"7319001":{"a":["III"],"m":"Curadoria: montagem de estandes p/ feiras - Anexo III (art. 18, §5º-D, IX)"},
+"7319002":{"a":["III"],"m":"Curadoria: promocao de vendas - Anexo III (art. 18, §5º-F; COSIT 13/2022)"},
+"7319003":{"a":["III"],"m":"Curadoria: marketing direto - Anexo III (art. 18, §5º-F; COSIT 13/2022)"},
+"7319099":{"a":["III"],"m":"Curadoria: publicidade executiva/veiculacao - Anexo III (art. 18, §5º-F c/c art. 17, §2º)"},
 "7410202":{"a":["IV","V"],"fatorR":True},"7410203":{"a":["V"],"fatorR":True},"7420001":{"a":["V"],"fatorR":True},"7490101":{"a":["V"],"fatorR":True},
 "7500100":{"a":["III"]},"7711000":{"a":["III"]},"7739099":{"a":["III"]},
 "7810800":{"vedado":True},"7820500":{"vedado":True},"7830200":{"vedado":True},
@@ -50,7 +54,7 @@ def enquadrar(cid, div, desc):
     if m:
         if m.get("vedado"):
             return False, [], False, "Curadoria: vedação art.17", "curadoria"
-        return True, m["a"], bool(m.get("fatorR")), "Curadoria tabela 2026", "curadoria"
+        return True, m["a"], bool(m.get("fatorR")), m.get("m", "Curadoria tabela 2026"), "curadoria"
     if any(cid.startswith(p) for p in VED_PREFIX):
         return False, [], False, "Prefixo com vedação típica art.17 (financeiro/adm.pública/associativo/fumo/explosivos/rádio/TV)", "regra"
     d2 = (div or "")[:2]
@@ -122,6 +126,30 @@ def enquadrar(cid, div, desc):
 def digits(s):
     return re.sub(r"\D", "", s)
 
+def base_legal(status, anexos, fr):
+    if status == "DESATIVADA":
+        return "CNAE 2.2 desativado (IBGE/Concla) - usar o correspondente 2.3"
+    if status == "VEDADO":
+        return "LC 123/2006, art. 17 - atividade impeditiva (sem anexo)"
+    anx = [a for a in (anexos or "").split(",") if a]
+    if fr or len(anx) > 1:
+        if "III" in anx:
+            return "LC 123/2006, art. 18, §§5º-I/5º-J/5º-M - Fator R define III ou V (folha ÷ receita ≷ 28%)"
+        if set(anx) == {"IV", "V"}:
+            return "LC 123/2006, art. 18, §§5º-C/5º-I - validar enquadramento (Fator R)"
+        return "LC 123/2006, art. 18, §5º-I + §5º-J - Anexo V; com Fator R ≥ 28% vai ao III"
+    if anx == ["I"]:
+        return "LC 123/2006, art. 18, §4º, I + Anexo I (comercio)"
+    if anx == ["II"]:
+        return "LC 123/2006, art. 18, §4º, II e §5º + Anexo II (industria)"
+    if anx == ["III"]:
+        return "LC 123/2006, art. 18, §§5º-B/5º-D/5º-E/5º-F (inclui regra residual do §5º-F c/c art. 17, §2º) + Anexo III"
+    if anx == ["IV"]:
+        return "LC 123/2006, art. 18, §5º-C + Anexo IV (CPP fora do DAS)"
+    if anx == ["V"]:
+        return "LC 123/2006, art. 18, §5º-I + Anexo V"
+    return "LC 123/2006, arts. 17/18 - validar enquadramento"
+
 out = []
 for a in anexo:
     cid = digits(a["cnae"])
@@ -140,11 +168,12 @@ for a in anexo:
         "status": status, "anexos": ",".join(anexos),
         "fatorR": "SIM" if fr else "NAO",
         "motivo": motivo, "origem": origem,
+        "base": base_legal(status, ",".join(anexos), fr),
     })
 
 json.dump(out, open("simples-nacional-prototipo/classificacao_simples_23.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 with open("simples-nacional-prototipo/classificacao_simples_23.csv", "w", encoding="utf-8-sig", newline="") as f:
-    w = csv.DictWriter(f, fieldnames=["cnae","id","descricao","divisao","status","anexos","fatorR","motivo","origem"])
+    w = csv.DictWriter(f, fieldnames=["cnae","id","descricao","divisao","status","anexos","fatorR","motivo","origem","base"])
     w.writeheader()
     w.writerows(out)
 

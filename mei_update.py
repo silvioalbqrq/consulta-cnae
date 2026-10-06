@@ -13,13 +13,16 @@ mei_by_id = {did(m['cnae']): m for m in mei}
 OVERRIDES = {
     '1220499': {'status': 'OPTANTE', 'anexos': 'II', 'fatorR': 'NAO',
                 'motivo': 'Anexo XI autoriza ao MEI (exceto cigarros/cigarrilhas/charutos); no Simples geral validar art.17',
-                'origem': 'excecao-MEI'},
+                'origem': 'excecao-MEI',
+                'base': 'LC 123/2006, art. 18, §4º, II e §5º + Anexo II (industria)'},
     '4929902': {'status': 'OPTANTE', 'anexos': 'III', 'fatorR': 'NAO',
                 'motivo': 'Anexo XI autoriza ao MEI (fretamento em regiao metropolitana); intermunicipal geral e vedado',
-                'origem': 'excecao-MEI'},
+                'origem': 'excecao-MEI',
+                'base': 'LC 123/2006, art. 18, §§5º-B/5º-D/5º-E/5º-F (inclui regra residual do §5º-F c/c art. 17, §2º) + Anexo III'},
     '9700500': {'status': 'OPTANTE', 'anexos': 'III', 'fatorR': 'NAO',
                 'motivo': 'Diarista autonoma permite MEI; vinculo de emprego domestico nao permite Simples',
-                'origem': 'excecao-MEI'},
+                'origem': 'excecao-MEI',
+                'base': 'LC 123/2006, art. 18, §§5º-B/5º-D/5º-E/5º-F (inclui regra residual do §5º-F c/c art. 17, §2º) + Anexo III'},
 }
 
 n_mei = 0
@@ -41,14 +44,14 @@ json.dump(cls, open(BASE + 'classificacao_simples_23.json', 'w', encoding='utf-8
           ensure_ascii=False, indent=1)
 with open(BASE + 'classificacao_simples_23.csv', 'w', encoding='utf-8-sig', newline='') as f:
     w = csv.DictWriter(f, fieldnames=['cnae', 'id', 'descricao', 'divisao', 'status', 'anexos',
-                                      'fatorR', 'mei', 'mei_iss', 'motivo', 'origem'])
+                                      'fatorR', 'mei', 'mei_iss', 'motivo', 'origem', 'base'])
     w.writeheader()
     for x in cls:
         r = dict(x)
         r['mei_ocup'] = ' | '.join(x.get('mei_ocup', []))
         w.writerow({k: r.get(k, '') for k in
                     ['cnae', 'id', 'descricao', 'divisao', 'status', 'anexos',
-                     'fatorR', 'mei', 'mei_iss', 'motivo', 'origem']})
+                     'fatorR', 'mei', 'mei_iss', 'motivo', 'origem', 'base']})
 
 # rebuild dados.js
 base = json.load(open(BASE + 'cnaes.json', encoding='utf-8'))

@@ -153,19 +153,6 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:6px 16px 30px}
     <button class="kpi" data-k="MEI" aria-pressed="false"><span class="ic i-m" aria-hidden="true">🧾</span><span><small>Permite MEI</small><b id="kM">—</b></span></button>
   </div>
 
-  <div class="panel" style="margin-top:14px" aria-label="Analisar arquivo com CNAEs">
-    <div class="printh"><b>Consulta CNAE — Análise de enquadramento no Simples Nacional</b><br><small id="printDate"></small></div>
-    <h2 class="noprint">📄 Analisar cartão CNPJ / arquivo</h2>
-    <p class="sub noprint">Envie PDF, imagem (foto/print do cartão CNPJ) ou TXT com CNAEs — extraímos os códigos e dizemos se a empresa pode optar pelo Simples e quais anexos se aplicam. Tudo processado no seu navegador, nada é enviado.</p>
-    <div class="drop" id="dz" role="button" tabindex="0" aria-label="Enviar arquivo PDF, imagem ou texto">
-      <b>Arraste o arquivo aqui ou clique para escolher</b>
-      <small>PDF · PNG · JPG · WEBP · TXT (cartão CNPJ da Receita, lista de CNAEs…)</small>
-      <input type="file" id="fin" accept=".pdf,.txt,.text,.png,.jpg,.jpeg,.webp,.bmp" hidden>
-    </div>
-    <div class="prog" id="aprog" aria-live="polite"></div>
-    <div id="aout"></div>
-  </div>
-
   <div class="layout">
     <aside class="side" role="complementary" aria-label="Filtros">
       <h3>Filtros</h3>
@@ -191,6 +178,19 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:6px 16px 30px}
     </div>
   </div>
 
+  <div class="panel" style="margin-top:14px" aria-label="Analisar arquivo com CNAEs">
+    <div class="printh"><b>Consulta CNAE — Análise de enquadramento no Simples Nacional</b><br><small id="printDate"></small></div>
+    <h2 class="noprint">📄 Analisar cartão CNPJ / arquivo</h2>
+    <p class="sub noprint">Envie PDF, imagem (foto/print do cartão CNPJ) ou TXT com CNAEs — extraímos os códigos e dizemos se a empresa pode optar pelo Simples e quais anexos se aplicam. Tudo processado no seu navegador, nada é enviado.</p>
+    <div class="drop" id="dz" role="button" tabindex="0" aria-label="Enviar arquivo PDF, imagem ou texto">
+      <b>Arraste o arquivo aqui ou clique para escolher</b>
+      <small>PDF · PNG · JPG · WEBP · TXT (cartão CNPJ da Receita, lista de CNAEs…)</small>
+      <input type="file" id="fin" accept=".pdf,.txt,.text,.png,.jpg,.jpeg,.webp,.bmp" hidden>
+    </div>
+    <div class="prog" id="aprog" aria-live="polite"></div>
+    <div id="aout"></div>
+  </div>
+
   <div class="cards2">
     <div class="panel">
       <h2>Simulador de alíquota efetiva</h2>
@@ -212,7 +212,9 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:6px 16px 30px}
         <span class="pill p-bad">VEDADO</span> art. 17 — sem anexo.<br>
         <span class="pill p-des">DESATIVADA</span> código 2.2 antigo — use o correspondente.<br>
         <span class="pill p-mei">MEI</span> ocupação do Anexo XI (Res. CGSN 140/2018) — permite MEI.<br><br>
-        Exemplos: <b>4723-7/00</b> optante I · <b>6201-5/01</b> ambíguo V→III · <b>6911-7/01</b> optante IV · <b>3513-1/00</b> vedado.
+        <b>Base legal por anexo</b> (ver fundamento exato na ficha de cada CNAE):<br>
+        I — art. 18, §4º, I · II — art. 18, §4º, II e §5º · III — §§5º-B/5º-D/5º-E/5º-F (residual §5º-F c/c art. 17, §2º) · IV — §5º-C (CPP fora) · V — §5º-I, com Fator R (§5º-J: ≥ 28% → III).<br><br>
+        Exemplos: <b>4723-7/00</b> optante I · <b>6201-5/01</b> ambíguo V→III · <b>6911-7/01</b> optante IV · <b>3513-1/00</b> vedado · <b>7319-0/99</b> optante III.
       </div>
     </div>
   </div>
@@ -232,7 +234,7 @@ const TAB={I:[[180000,4,0],[360000,7.3,5940],[720000,9.5,13860],[1800000,10.7,22
 const norm=s=>(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
 const soDig=s=>(s||"").replace(/\D/g,"");
 const BRL=v=>v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
-const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 let DATA=[],BASE={},st="",anexos=new Set(),div="",frOnly=false,meiOnly=false,limit=60;
 const toast=document.getElementById("toast");
 function showToast(msg){toast.textContent=msg;toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),2200);}
@@ -304,7 +306,7 @@ function openD(id){
   const b=BASE[id],notas=b?((b.obs||b.o)||[]).slice(0,2):[];
   const ocups=(x.mei_ocup||[]).filter(Boolean);
   dCode.textContent=x.cnae+" · Divisão "+x.divisao;dDesc.textContent=x.descricao;dPill.innerHTML=pill(x.status)+(x.mei==="SIM"?' <span class="pill p-mei">MEI</span>':"");
-  let html='<div class="kv"><b>Anexos</b><span>'+(x.anexos||"— (vedado)")+'</span><b>Fator R</b><span>'+(x.fatorR==="SIM"?"Sim — folha ÷ receita ≥ 28% → III, senão V":"Não")+'</span><b>Motivo</b><span>'+x.motivo+' ('+x.origem+')</span></div>';
+  let html='<div class="kv"><b>Anexos</b><span>'+(x.anexos||"— (vedado)")+'</span><b>Fator R</b><span>'+(x.fatorR==="SIM"?"Sim — folha ÷ receita ≥ 28% → III, senão V":"Não")+'</span><b>Base legal</b><span>'+(x.base||"—")+'</span><b>Motivo</b><span>'+x.motivo+' ('+x.origem+')</span></div>';
   if(x.fatorR==="SIM")html+='<div class="alert y"><b>Ambíguo / Fator R.</b> Calcule na seção Simulador.</div>';
   if(x.status==="VEDADO")html+='<div class="alert r"><b>Vedado</b> (art. 17, LC 123/2006). Sem anexo.</div>';
   if(x.status==="DESATIVADA")html+='<div class="alert y"><b>Código 2.2 desativado.</b> Use o correspondente.</div>';
@@ -339,7 +341,7 @@ btnMore.onclick=()=>{limit+=120;render();};
 btnClear.onclick=()=>{st="";anexos.clear();div="";frOnly=false;meiOnly=false;q.value="";fDiv.value="";fR.checked=false;fMEI.checked=false;document.querySelector('#fStatus input[value=""]').checked=true;fAnexo.querySelectorAll("input").forEach(i=>i.checked=false);document.querySelectorAll(".kpi").forEach((x,i)=>{x.classList.toggle("on",i===0);x.setAttribute("aria-pressed",i===0?"true":"false");});limit=60;render();history.replaceState(null,"",""+location.pathname);};
 btnCsv.onclick=()=>{
   const arr=filtrados();
-  const csv="cnae;descricao;divisao;status;anexos;fatorR;mei;mei_iss;mei_ocupacoes;motivo\n"+arr.map(x=>[x.cnae,'"'+x.descricao.replace(/"/g,'""')+'"',x.divisao,x.status,x.anexos,x.fatorR,x.mei||"",x.mei_iss||"",'"'+((x.mei_ocup||[]).join(" | ")).replace(/"/g,'""')+'"','"'+(x.motivo||"").replace(/"/g,'""')+'"'].join(";")).join("\n");
+  const csv="cnae;descricao;divisao;status;anexos;fatorR;base_legal;mei;mei_iss;mei_ocupacoes;motivo\n"+arr.map(x=>[x.cnae,'"'+x.descricao.replace(/"/g,'""')+'"',x.divisao,x.status,x.anexos,x.fatorR,'"'+((x.base||"")).replace(/"/g,'""')+'"',x.mei||"",x.mei_iss||"",'"'+((x.mei_ocup||[]).join(" | ")).replace(/"/g,'""')+'"','"'+(x.motivo||"").replace(/"/g,'""')+'"'].join(";")).join("\n");
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv"}));a.download="consulta-cnae.csv";a.click();
 };
 btnShare.onclick=()=>{
@@ -469,8 +471,8 @@ function analyzeText(text,fname){
   else if(known.length)html+='<br>🧾 Nenhuma atividade permite MEI.';
   if(unk.length)html+='<br><small>Código(s) não localizado(s) na base 2.3: '+unk.map(r=>fmtC(r.cnae)).join(", ")+" — fora do veredito.</small>";
   html+="</div>";
-  html+='<table class="minitab"><thead><tr><th>CNAE</th><th>Papel</th><th>Descrição</th><th>Situação</th><th>Anexo</th><th>MEI</th></tr></thead><tbody>'
-    +rows.map(r=>"<tr><td class=\"mono\">"+fmtC(r.cnae)+"</td><td>"+r.papel+"</td><td>"+(r.x?r.x.descricao:"<i>não encontrado</i>")+"</td><td>"+(r.x?pill(r.x.status):"—")+"</td><td>"+(r.x&&r.x.anexos?r.x.anexos:"—")+"</td><td>"+(r.x&&r.x.mei==="SIM"?"Sim":"—")+"</td></tr>").join("")+"</tbody></table>";
+  html+='<table class="minitab"><thead><tr><th>CNAE</th><th>Papel</th><th>Descrição</th><th>Situação</th><th>Anexo</th><th>Base legal</th><th>MEI</th></tr></thead><tbody>'
+    +rows.map(r=>"<tr><td class=\"mono\">"+fmtC(r.cnae)+"</td><td>"+r.papel+"</td><td>"+(r.x?r.x.descricao:"<i>não encontrado</i>")+"</td><td>"+(r.x?pill(r.x.status):"—")+"</td><td>"+(r.x&&r.x.anexos?r.x.anexos:"—")+"</td><td><small>"+(r.x&&r.x.base?r.x.base:"—")+"</small></td><td>"+(r.x&&r.x.mei==="SIM"?"Sim":"—")+"</td></tr>").join("")+"</tbody></table>";
   box.innerHTML=html;setProg("");
   document.getElementById("printDate").textContent="Emitido em "+new Date().toLocaleString("pt-BR")+(info.razao?" · "+info.razao:"")+(info.cnpj?" · "+info.cnpj:"");
 }

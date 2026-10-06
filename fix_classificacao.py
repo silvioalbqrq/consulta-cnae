@@ -7,7 +7,8 @@ if '9900800' not in ids:
     cls.append({'cnae': '9900-8/00', 'id': '9900800',
                 'descricao': 'Organismos internacionais e outras instituicoes extraterritoriais',
                 'divisao': '99', 'status': 'VEDADO', 'anexos': '', 'fatorR': 'NAO',
-                'motivo': 'Organismos internacionais/extraterritoriais - vedado', 'origem': 'regra'})
+                'motivo': 'Organismos internacionais/extraterritoriais - vedado', 'origem': 'regra',
+                'base': 'LC 123/2006, art. 17 - atividade impeditiva (sem anexo)'})
 aliases = {'1610201': ('1610-2/01', '1610-2/03'), '1610202': ('1610-2/02', '1610-2/04'),
            '4541205': ('4541-2/05', '4541-2/06'), '4713001': ('4713-0/01', '4713-0/04'),
            '4713003': ('4713-0/03', '4713-0/05'), '5611202': ('5611-2/02', '5611-2/04')}
@@ -16,10 +17,11 @@ for nid, (cod, novo) in aliases.items():
     if nid not in have:
         cls.append({'cnae': cod, 'id': nid, 'descricao': '[DESATIVADA 2.2] ver ' + novo,
                     'divisao': cod[:2], 'status': 'DESATIVADA', 'anexos': '', 'fatorR': 'NAO',
-                    'motivo': 'Codigo 2.2 desativado - usar ' + novo, 'origem': 'alias-2.2'})
+                    'motivo': 'Codigo 2.2 desativado - usar ' + novo, 'origem': 'alias-2.2',
+                    'base': 'CNAE 2.2 desativado (IBGE/Concla) - usar o correspondente 2.3'})
 json.dump(cls, open(p, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 with open('simples-nacional-prototipo/classificacao_simples_23.csv', 'w', encoding='utf-8-sig', newline='') as f:
-    w = csv.DictWriter(f, fieldnames=['cnae', 'id', 'descricao', 'divisao', 'status', 'anexos', 'fatorR', 'motivo', 'origem'])
+    w = csv.DictWriter(f, fieldnames=['cnae', 'id', 'descricao', 'divisao', 'status', 'anexos', 'fatorR', 'motivo', 'origem', 'base'])
     w.writeheader()
     w.writerows(cls)
 from collections import Counter
