@@ -9,45 +9,50 @@
 <meta property="og:description" content="Enquadramento de CNAEs no Simples Nacional (LC 123/2006). Busca, filtros, MEI e simulador de alíquota.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://silvioalbqrq.github.io/consulta-cnae/">
-<meta name="theme-color" content="#0b132b">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%23fce7f3'/><text x='50' y='62' text-anchor='middle' font-size='46' font-weight='900' fill='%23db2777'>▦</text></svg>">
+<meta name="theme-color" content="#0f2a44">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%23c9a227'/><text x='50' y='62' text-anchor='middle' font-size='46' font-weight='900' fill='%230f2a44'>▦</text></svg>">
 <style>
 :root{
-  --navy:#0b132b;--navy2:#111c34;--blue:#1d4ed8;--pinkbg:#fce7f3;--pink:#db2777;
-  --bg:#f3f4f6;--card:#fff;--line:#e6e8ee;--txt:#111827;--mut:#6b7280;
-  --ind:#0b132b;--ok:#16a34a;--okbg:#dcfce7;
+  --navy:#0f2a44;--navy2:#1a3a5c;--gold:#c9a227;--gold-2:#a8861b;--goldbg:#faf5e8;
+  --blue:#1d4ed8;
+  --bg:#f4f2ec;--card:#fff;--line:#dce4ec;--txt:#1e2a38;--mut:#5d6e80;
+  --radius:14px;--shadow:0 8px 24px rgba(15,42,68,.08);
+  --ind:#0f2a44;--ok:#16a34a;--okbg:#dcfce7;
   --bad:#dc2626;--badbg:#fee2e2;--amb:#b45309;--ambbg:#fef3c7;--des:#64748b;--desbg:#e2e8f0;
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;background:var(--bg);color:var(--txt)}
-.top{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,var(--navy),var(--navy2));border-bottom:1px solid var(--navy);color:#fff}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+body{margin:0;font-family:Georgia,"Times New Roman",serif;background:var(--bg);color:var(--txt)}
+.top{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,var(--navy),var(--navy2));border-bottom:3px solid var(--gold);color:#fff}
 .topin{max-width:1280px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px;white-space:nowrap;color:#fff}
-.logo .mk{width:34px;height:34px;border-radius:9px;background:var(--pinkbg);color:var(--pink);display:grid;place-items:center;font-size:16px;font-weight:900}
-.logo small{display:block;font-size:11px;color:#9aa6c2;font-weight:400}
+.logo .mk{width:34px;height:34px;border-radius:9px;background:var(--gold);color:var(--navy);display:grid;place-items:center;font-size:16px;font-weight:900}
+.logo small{display:block;font-size:11px;color:#cdd9e8;font-weight:400}
 .gsearch{flex:1;min-width:220px;display:flex;align-items:center;gap:8px;border:1px solid transparent;border-radius:10px;padding:9px 13px;background:#fff;color:var(--txt)}
 .gsearch:focus-within{box-shadow:0 0 0 2px var(--blue)}
 .gsearch input{border:0;outline:0;background:transparent;flex:1;font-size:14px;color:var(--txt)}
 .gsearch input::placeholder{color:#9ca3af}
 .hbtns{display:flex;gap:8px}
-.btn{background:var(--navy2);color:#fff;border:0;border-radius:9px;padding:9px 16px;font-weight:700;font-size:13.5px;cursor:pointer;white-space:nowrap}
-.btn:hover{background:#1a2547}
+.btn{background:var(--navy);color:#fff;border:0;border-radius:9px;padding:9px 16px;font-weight:700;font-size:13.5px;cursor:pointer;white-space:nowrap;font-family:inherit}
+.btn:hover{background:var(--navy2)}
 .btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
 .btn.ghost:hover{background:#f1f5f9}
+.btn.gh{background:transparent;color:#fff;border:1px solid #fff;text-decoration:none;display:inline-flex;align-items:center}
+.btn.gh:hover{background:#fff;color:var(--navy)}
 .page{max-width:1280px;margin:0 auto;padding:18px 20px 48px}
 .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
 @media(max-width:1000px){.kpis{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:640px){.kpis{grid-template-columns:repeat(2,1fr)}}
-.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:center;cursor:pointer;text-align:left;width:100%;font:inherit;color:inherit}
+.kpi{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--gold);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;display:flex;gap:12px;align-items:center;cursor:pointer;text-align:left;width:100%;font:inherit;color:inherit}
 .kpi:hover{border-color:var(--ind)}
-.kpi.on{border:2px solid var(--ind);padding:13px 15px}
+.kpi.on{border:2px solid var(--ind);border-top:2px solid var(--gold);padding:13px 15px}
 .kpi .ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:19px;flex:none}
 .kpi small{color:var(--mut);font-size:12px;display:block}
 .kpi b{font-size:23px;line-height:1.2}
 .i-t{background:#e0e7ff}.i-o{background:var(--okbg)}.i-a{background:var(--ambbg)}.i-v{background:var(--badbg)}.i-m{background:#e8eefc}
 .layout{display:grid;grid-template-columns:250px 1fr;gap:14px;margin-top:14px;align-items:start}
 @media(max-width:900px){.layout{grid-template-columns:1fr}}
-.side{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;position:sticky;top:76px}
+.side{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--gold);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;position:sticky;top:76px}
 @media(max-width:900px){.side{position:static}}
 .side h3{margin:0 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--mut)}
 .fgroup{border-bottom:1px solid var(--line);padding:10px 0}
@@ -57,11 +62,11 @@ body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;ba
 .fitem input{accent-color:var(--ind);width:15px;height:15px}
 .fitem .n{margin-left:auto;font-size:11.5px;color:var(--mut);background:#f1f5f9;border-radius:6px;padding:1px 7px}
 .side select{width:100%;padding:9px;border:1px solid var(--line);border-radius:9px;font-size:13.5px;margin-top:4px}
-.main{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.main{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--gold);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
 .main-h{padding:13px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--mut);flex-wrap:wrap}
 .main-h b{color:var(--txt)}
 table{width:100%;border-collapse:collapse;font-size:13.5px}
-th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);padding:10px 12px;border-bottom:1px solid var(--line);background:#f8fafc;position:sticky;top:0}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);padding:10px 12px;border-bottom:1px solid var(--line);background:var(--goldbg);position:sticky;top:0}
 td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
 tbody tr{cursor:pointer}
 tbody tr:hover{background:#f1f5f9}
@@ -90,15 +95,30 @@ body.dopen .drawer-veil{display:block}
 .alert.r{background:#fef2f2;border:1px solid #fca5a5}
 .cards2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
 @media(max-width:900px){.cards2{grid-template-columns:1fr}}
-.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
-.panel h2{margin:0 0 4px;font-size:16px}
+.panel{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--gold);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+.panel h2{margin:0 0 4px;font-size:17px;font-family:Georgia,"Times New Roman",serif;color:var(--navy);border-left:4px solid var(--gold);padding-left:10px}
 .panel p.sub{margin:0 0 12px;color:var(--mut);font-size:13px}
 .calc4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 @media(max-width:640px){.calc4{grid-template-columns:1fr 1fr}}
 label{font-size:12px;color:var(--mut);display:block;margin-bottom:5px}
 input.num,select.num{width:100%;padding:10px;border:1px solid var(--line);border-radius:9px;font-size:14px}
 .result{background:var(--navy);color:#fff;border-radius:10px;padding:12px;margin-top:12px;font-size:14px}
-footer{text-align:center;color:var(--mut);font-size:12px;padding:6px 16px 30px}
+.footer{background:#0f2a44;color:#cdd9e8;margin-top:20px;border-top:4px solid #c9a227}
+.footer strong{color:#fff}
+.footer strong.ft{font-family:Georgia,"Times New Roman",serif}
+.footer a{color:#fff}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1.4fr;gap:20px;padding-top:26px;padding-bottom:10px}
+.footer .donate-code{font-family:Consolas,monospace;font-size:12px;background:rgba(255,255,255,.1);padding:2px 6px;border-radius:6px;word-break:break-all}
+.footer .reveal-link{color:#c9a227;font-size:12px}
+.contact-icons{display:flex;gap:10px;margin-top:10px}
+.contact-icons a{width:40px;height:40px;display:grid;place-items:center;border:1px solid #c9a227;border-radius:50%;color:#c9a227}
+.contact-icons a:hover{background:#c9a227;color:#0f2a44}
+.contact-icons svg{width:20px;height:20px}
+.btn-outline-l{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5);border-radius:9px;padding:4px 8px;font-size:12px;margin-left:6px;cursor:pointer;font-family:inherit}
+.btn-outline-l:hover{background:#fff;color:#0f2a44}
+.footer-base{border-top:1px solid rgba(255,255,255,.15);padding-top:12px;padding-bottom:18px}
+.footer-base small,.footer small{color:#9db1c7}
+@media(max-width:760px){.footer-grid{grid-template-columns:1fr}}
 .skel{background:linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%);background-size:200% 100%;animation:sh 1.5s infinite;border-radius:6px;height:14px;margin:4px 0}
 @keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:99;opacity:0;transition:opacity .3s;pointer-events:none}
@@ -113,12 +133,12 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:6px 16px 30px}
 .verdict.no{background:var(--badbg);border:1px solid #fca5a5}
 .verdict b.t{font-size:16px}
 .minitab{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
-.minitab th{text-align:left;font-size:11px;text-transform:uppercase;color:var(--mut);padding:7px 8px;border-bottom:1px solid var(--line);background:#f8fafc;position:static}
+.minitab th{text-align:left;font-size:11px;text-transform:uppercase;color:var(--mut);padding:7px 8px;border-bottom:1px solid var(--line);background:var(--goldbg);position:static}
 .minitab td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
 .prog{font-size:13px;color:var(--blue);font-weight:700;margin-top:10px;min-height:18px}
 .printh{display:none}
 @media print{
-  .top,.kpis,.layout,.cards2,footer,.drawer,.drawer-veil,.toast,.drop,.prog,.noprint,.verdict .btn{display:none!important}
+  .top,.kpis,.layout,.cards2,footer,.footer,.drawer,.drawer-veil,.toast,.drop,.prog,.noprint,.verdict .btn{display:none!important}
   body{background:#fff}
   .page{max-width:none;margin:0;padding:0 8px}
   .panel{border:0;padding:0}
@@ -141,6 +161,7 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:6px 16px 30px}
   <div class="hbtns">
     <button class="btn ghost" id="btnShare" title="Compartilhar filtros">🔗</button>
     <button class="btn ghost" id="btnCsv" aria-label="Exportar CSV">Exportar</button>
+    <a class="btn gh" href="https://github.com/silvioalbqrq" target="_blank" rel="noopener">GitHub</a>
   </div>
 </div></header>
 
@@ -226,9 +247,33 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:6px 16px 30px}
   <div class="drawer-b" id="dBody"></div>
 </aside>
 <div class="toast" id="toast"></div>
-<footer>Consulta CNAE · apoio à decisão — valide com contador, contrato social, código municipal e PGDAS</footer>
+<footer class="footer">
+<div style="max-width:1280px;margin:0 auto;padding-left:20px;padding-right:20px">
+<div class="footer-grid">
+<div>
+<strong class="ft">Consulta CNAE — Simples Nacional</strong>
+<p style="font-size:13px;line-height:1.6;margin:8px 0 0">Enquadramento no Simples Nacional por CNAE. Ferramenta educacional — não substitui parecer técnico ou assessoria contábil.</p>
+<div class="contact-icons">
+<a href="mailto:silvio.albqrq@gmail.com" title="E-mail" aria-label="E-mail"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 6 10-6"/></svg></a>
+<a href="https://wa.me/5585998206642?text=Ol%C3%A1%2C%20vim%20pelo%20site%20Consulta%20CNAE" target="_blank" rel="noopener" title="WhatsApp" aria-label="WhatsApp"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.5L3 21l2-5.4A8.5 8.5 0 1 1 21 11.5z"/><path d="M9 9.2c.4 2.3 2.5 4.4 4.8 4.8l.9-1.4 1.9.9c-.4 1.4-1.3 1.9-2.7 1.5-2.7-.9-5.1-3.3-6-6-.4-1.4.1-2.3 1.5-2.7l.9 1.9z"/></svg></a>
+<a href="https://github.com/silvioalbqrq" target="_blank" rel="noopener" title="GitHub" aria-label="GitHub"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+</div>
+</div>
+<div>
+<strong>Contato</strong>
+<p style="font-size:13px;line-height:2;margin:8px 0 0"><a href="https://wa.me/5585998206642?text=Ol%C3%A1%2C%20vim%20pelo%20site%20Consulta%20CNAE" target="_blank" rel="noopener">WhatsApp</a><br><a href="mailto:silvio.albqrq@gmail.com">E-mail</a><br><a href="https://github.com/silvioalbqrq" target="_blank" rel="noopener">GitHub</a></p>
+</div>
+<div>
+<strong>Doações</strong>
+<div class="donate-item" style="margin-top:8px;font-size:13px"><small>Pix (chave aleatória)</small><br><span class="donate-code" id="pix-chave">8eea81fc…da37f</span><button class="btn-outline-l" data-copy data-full="8eea81fc-cb40-4150-91fa-6ca829ada37f">Copiar</button> <a href="#" class="reveal-link" data-reveal data-short="8eea81fc…da37f" data-full="8eea81fc-cb40-4150-91fa-6ca829ada37f">ver completa</a></div>
+<div class="donate-item" style="margin-top:8px;font-size:13px"><small>Lightning (invoice única)</small><br><span class="donate-code" id="ln-address">lnbc1p4…paewhvg</span><button class="btn-outline-l" data-copy data-full="lnbc1p4tt3ccpp5fntekr0ya4r4zd6durklrznte0zsg5jv3zcv83sss4u4efd8d7gsdqqcqzzsxqrrsssp5xg8m0ydtzqprnym2ruqp4260au726czc86p5y2mpl575mp8avdcs9qxpqysgqsjawffjrlkwpa77wf9zvsjx99z833h0dvjqjh0nxqph75rrkghrhzrfwdhj0fqt57l0nwl69c2sgutmm40mgzhkmqy9dpzcje69u09qpaewhvg">Copiar</button> <a href="#" class="reveal-link" data-reveal data-short="lnbc1p4…paewhvg" data-full="lnbc1p4tt3ccpp5fntekr0ya4r4zd6durklrznte0zsg5jv3zcv83sss4u4efd8d7gsdqqcqzzsxqrrsssp5xg8m0ydtzqprnym2ruqp4260au726czc86p5y2mpl575mp8avdcs9qxpqysgqsjawffjrlkwpa77wf9zvsjx99z833h0dvjqjh0nxqph75rrkghrhzrfwdhj0fqt57l0nwl69c2sgutmm40mgzhkmqy9dpzcje69u09qpaewhvg">ver completa</a></div>
+</div>
+</div>
+<div class="footer-base"><small>© 2026 Consulta CNAE · Bases: LC 123/2006 · Ferramenta educacional.</small></div>
+</div>
+</footer>
 
-<script src="dados.js"></script>
+<script src="dados.js?v=20261008-04"></script>
 <script>
 const TAB={I:[[180000,4,0],[360000,7.3,5940],[720000,9.5,13860],[1800000,10.7,22500],[3600000,14.3,87300],[4800000,19,378000]],II:[[180000,4.5,0],[360000,7.8,5940],[720000,10,13860],[1800000,11.2,22500],[3600000,14.7,85500],[4800000,30,720000]],III:[[180000,6,0],[360000,11.2,9360],[720000,13.5,17640],[1800000,16,35640],[3600000,21,125640],[4800000,33,648000]],IV:[[180000,4.5,0],[360000,9,8100],[720000,10.2,12420],[1800000,14,39780],[3600000,22,183780],[4800000,33,828000]],V:[[180000,15.5,0],[360000,18,4500],[720000,19.5,12780],[1800000,20.5,25560],[3600000,23,62100],[4800000,30.5,540000]]};
 const norm=s=>(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
@@ -270,8 +315,8 @@ function boot(cls,mini){
 
 rcount.innerHTML='<div class="skel" style="width:120px"></div><div class="skel" style="width:200px"></div>';
 if(window.RADAR_DATA&&window.RADAR_DATA.length){boot(window.RADAR_DATA,window.RADAR_BASE||{});}
-else{fetch("dados.js").then(r=>r.text()).then(t=>{(0,eval)(t);boot(window.RADAR_DATA,window.RADAR_BASE||{});}).catch(()=>{rcount.textContent="Erro ao carregar dados. Abra via servidor HTTP."});}
-if("serviceWorker" in navigator&&location.protocol!=="file:"){navigator.serviceWorker.register("sw.js").catch(()=>{});}
+else{fetch("dados.js?v=20261008-04").then(r=>r.text()).then(t=>{(0,eval)(t);boot(window.RADAR_DATA,window.RADAR_BASE||{});}).catch(()=>{rcount.textContent="Erro ao carregar dados. Abra via servidor HTTP."});}
+if("serviceWorker" in navigator&&location.protocol!=="file:"){navigator.serviceWorker.register("sw.js?v=20261008-04").catch(()=>{});}
 
 function pill(s){if(s==="DESATIVADA")return '<span class="pill p-des">DESATIVADA</span>';if(s==="OPTANTE")return '<span class="pill p-ok">OPTANTE</span>';if(s==="VEDADO")return '<span class="pill p-bad">VEDADO</span>';return '<span class="pill p-amb">AMBÍGUO</span>';}
 
@@ -401,8 +446,8 @@ function extractCnaes(text){
   return out.sort((a,b)=>a.pos-b.pos);
 }
 async function textFromPdf(buf){
-  if(typeof pdfjsLib==="undefined")await loadScriptOnce("pdf.min.js");
-  if(pdfjsLib.GlobalWorkerOptions&&!pdfjsLib.GlobalWorkerOptions.workerSrc)pdfjsLib.GlobalWorkerOptions.workerSrc="pdf.worker.min.js";
+  if(typeof pdfjsLib==="undefined")await loadScriptOnce("pdf.min.js?v=20261008-04");
+  if(pdfjsLib.GlobalWorkerOptions&&!pdfjsLib.GlobalWorkerOptions.workerSrc)pdfjsLib.GlobalWorkerOptions.workerSrc="pdf.worker.min.js?v=20261008-04";
   const pdf=await pdfjsLib.getDocument({data:buf}).promise;
   let txt="";
   const n=Math.min(pdf.numPages,10);
@@ -501,6 +546,23 @@ dz.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefa
 ["dragleave","drop"].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove("over");}));
 dz.addEventListener("drop",e=>{const f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];handleFile(f);});
 fin.addEventListener("change",()=>{handleFile(fin.files[0]);fin.value="";});
+
+/* ===== Rodapé Hub Fiscal: copiar chaves / revelar completa ===== */
+document.querySelectorAll("[data-copy]").forEach(b=>b.addEventListener("click",()=>{
+  const t=b.getAttribute("data-full")||"";
+  const done=()=>{const o=b.textContent;b.textContent="Copiado!";setTimeout(()=>{b.textContent=o;},1500);};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done).catch(()=>{prompt("Copie:",t);});}
+  else{prompt("Copie:",t);}
+}));
+document.querySelectorAll("[data-reveal]").forEach(a=>a.addEventListener("click",e=>{
+  e.preventDefault();
+  const box=a.closest(".donate-item")?a.closest(".donate-item").querySelector(".donate-code"):null;
+  if(!box)return;
+  const full=a.getAttribute("data-full"),short=a.getAttribute("data-short");
+  const showFull=box.textContent!==full;
+  box.textContent=showFull?full:short;
+  a.textContent=showFull?"ocultar":"ver completa";
+}));
 </script>
 </body>
 </html>
