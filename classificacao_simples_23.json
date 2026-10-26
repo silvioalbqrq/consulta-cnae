@@ -3426,7 +3426,8 @@
   "base": "LC 123/2006, art. 17 - atividade impeditiva (sem anexo)",
   "mei": "",
   "mei_iss": "",
-  "mei_ocup": []
+  "mei_ocup": [],
+  "revisar": true
  },
  {
   "cnae": "1111-9/02",
@@ -3441,7 +3442,8 @@
   "base": "LC 123/2006, art. 17 - atividade impeditiva (sem anexo)",
   "mei": "",
   "mei_iss": "",
-  "mei_ocup": []
+  "mei_ocup": [],
+  "revisar": true
  },
  {
   "cnae": "1112-7/00",
@@ -3471,7 +3473,8 @@
   "base": "LC 123/2006, art. 17 - atividade impeditiva (sem anexo)",
   "mei": "",
   "mei_iss": "",
-  "mei_ocup": []
+  "mei_ocup": [],
+  "revisar": true
  },
  {
   "cnae": "1113-5/02",
@@ -3486,7 +3489,8 @@
   "base": "LC 123/2006, art. 17 - atividade impeditiva (sem anexo)",
   "mei": "",
   "mei_iss": "",
-  "mei_ocup": []
+  "mei_ocup": [],
+  "revisar": true
  },
  {
   "cnae": "1121-6/00",
@@ -3655,7 +3659,8 @@
   "mei_iss": "N",
   "mei_ocup": [
    "FABRICANTE DE FUMO E DERIVADOS DO FUMO INDEPENDENTE"
-  ]
+  ],
+  "revisar": true
  },
  {
   "cnae": "1311-1/00",
@@ -6464,7 +6469,8 @@
   "base": "LC 123/2006, art. 17 - atividade impeditiva (sem anexo)",
   "mei": "",
   "mei_iss": "",
-  "mei_ocup": []
+  "mei_ocup": [],
+  "revisar": true
  },
  {
   "cnae": "2550-1/02",
@@ -6479,7 +6485,8 @@
   "base": "LC 123/2006, art. 17 - atividade impeditiva (sem anexo)",
   "mei": "",
   "mei_iss": "",
-  "mei_ocup": []
+  "mei_ocup": [],
+  "revisar": true
  },
  {
   "cnae": "2591-8/00",
@@ -9089,7 +9096,8 @@
   "base": "LC 123/2006, art. 17 - atividade impeditiva (sem anexo)",
   "mei": "",
   "mei_iss": "",
-  "mei_ocup": []
+  "mei_ocup": [],
+  "revisar": true
  },
  {
   "cnae": "3511-5/02",
@@ -9104,7 +9112,8 @@
   "base": "LC 123/2006, art. 17 - atividade impeditiva (sem anexo)",
   "mei": "",
   "mei_iss": "",
-  "mei_ocup": []
+  "mei_ocup": [],
+  "revisar": true
  },
  {
   "cnae": "3512-3/00",
@@ -9149,7 +9158,8 @@
   "base": "LC 123/2006, art. 17 - atividade impeditiva (sem anexo)",
   "mei": "",
   "mei_iss": "",
-  "mei_ocup": []
+  "mei_ocup": [],
+  "revisar": true
  },
  {
   "cnae": "3520-4/01",
@@ -9164,7 +9174,8 @@
   "base": "LC 123/2006, art. 17 - atividade impeditiva (sem anexo)",
   "mei": "",
   "mei_iss": "",
-  "mei_ocup": []
+  "mei_ocup": [],
+  "revisar": true
  },
  {
   "cnae": "3520-4/02",
@@ -9179,7 +9190,8 @@
   "base": "LC 123/2006, art. 17 - atividade impeditiva (sem anexo)",
   "mei": "",
   "mei_iss": "",
-  "mei_ocup": []
+  "mei_ocup": [],
+  "revisar": true
  },
  {
   "cnae": "3530-1/00",
@@ -9194,7 +9206,8 @@
   "base": "LC 123/2006, art. 17 - atividade impeditiva (sem anexo)",
   "mei": "",
   "mei_iss": "",
-  "mei_ocup": []
+  "mei_ocup": [],
+  "revisar": true
  },
  {
   "cnae": "3600-6/01",
@@ -18479,7 +18492,8 @@
   "base": "LC 123/2006, arts. 17/18 - validar enquadramento",
   "mei": "",
   "mei_iss": "",
-  "mei_ocup": []
+  "mei_ocup": [],
+  "revisar": true
  },
  {
   "cnae": "8511-2/00",
@@ -18509,7 +18523,8 @@
   "base": "LC 123/2006, art. 18, §§5º-B/5º-D/5º-E/5º-F (inclui regra residual do §5º-F c/c art. 17, §2º) + Anexo III",
   "mei": "",
   "mei_iss": "",
-  "mei_ocup": []
+  "mei_ocup": [],
+  "revisar": true
  },
  {
   "cnae": "8513-9/00",
@@ -18524,7 +18539,8 @@
   "base": "LC 123/2006, art. 18, §§5º-B/5º-D/5º-E/5º-F (inclui regra residual do §5º-F c/c art. 17, §2º) + Anexo III",
   "mei": "",
   "mei_iss": "",
-  "mei_ocup": []
+  "mei_ocup": [],
+  "revisar": true
  },
  {
   "cnae": "8520-1/00",
@@ -18539,7 +18555,8 @@
   "base": "LC 123/2006, art. 18, §§5º-B/5º-D/5º-E/5º-F (inclui regra residual do §5º-F c/c art. 17, §2º) + Anexo III",
   "mei": "",
   "mei_iss": "",
-  "mei_ocup": []
+  "mei_ocup": [],
+  "revisar": true
  },
  {
   "cnae": "8531-7/00",
@@ -18569,7 +18586,8 @@
   "base": "LC 123/2006, art. 18, §§5º-B/5º-D/5º-E/5º-F (inclui regra residual do §5º-F c/c art. 17, §2º) + Anexo III",
   "mei": "",
   "mei_iss": "",
-  "mei_ocup": []
+  "mei_ocup": [],
+  "revisar": true
  },
  {
   "cnae": "8533-3/00",
@@ -18584,7 +18602,8 @@
   "base": "LC 123/2006, art. 18, §§5º-B/5º-D/5º-E/5º-F (inclui regra residual do §5º-F c/c art. 17, §2º) + Anexo III",
   "mei": "",
   "mei_iss": "",
-  "mei_ocup": []
+  "mei_ocup": [],
+  "revisar": true
  },
  {
   "cnae": "8541-4/00",
@@ -18614,7 +18633,8 @@
   "base": "LC 123/2006, art. 18, §§5º-B/5º-D/5º-E/5º-F (inclui regra residual do §5º-F c/c art. 17, §2º) + Anexo III",
   "mei": "",
   "mei_iss": "",
-  "mei_ocup": []
+  "mei_ocup": [],
+  "revisar": true
  },
  {
   "cnae": "8550-3/01",
@@ -18629,7 +18649,8 @@
   "base": "LC 123/2006, art. 18, §§5º-B/5º-D/5º-E/5º-F (inclui regra residual do §5º-F c/c art. 17, §2º) + Anexo III",
   "mei": "",
   "mei_iss": "",
-  "mei_ocup": []
+  "mei_ocup": [],
+  "revisar": true
  },
  {
   "cnae": "8550-3/02",
@@ -18644,7 +18665,8 @@
   "base": "LC 123/2006, art. 18, §§5º-B/5º-D/5º-E/5º-F (inclui regra residual do §5º-F c/c art. 17, §2º) + Anexo III",
   "mei": "",
   "mei_iss": "",
-  "mei_ocup": []
+  "mei_ocup": [],
+  "revisar": true
  },
  {
   "cnae": "8591-1/00",
@@ -18659,7 +18681,8 @@
   "base": "LC 123/2006, art. 18, §§5º-B/5º-D/5º-E/5º-F (inclui regra residual do §5º-F c/c art. 17, §2º) + Anexo III",
   "mei": "",
   "mei_iss": "",
-  "mei_ocup": []
+  "mei_ocup": [],
+  "revisar": true
  },
  {
   "cnae": "8592-9/01",
@@ -18674,7 +18697,8 @@
   "base": "LC 123/2006, art. 18, §§5º-B/5º-D/5º-E/5º-F (inclui regra residual do §5º-F c/c art. 17, §2º) + Anexo III",
   "mei": "",
   "mei_iss": "",
-  "mei_ocup": []
+  "mei_ocup": [],
+  "revisar": true
  },
  {
   "cnae": "8592-9/02",
@@ -18691,7 +18715,8 @@
   "mei_iss": "S",
   "mei_ocup": [
    "INSTRUTOR(A) DE ARTES CÊNICAS INDEPENDENTE"
-  ]
+  ],
+  "revisar": true
  },
  {
   "cnae": "8592-9/03",
@@ -18708,7 +18733,8 @@
   "mei_iss": "S",
   "mei_ocup": [
    "INSTRUTOR(A) DE MÚSICA INDEPENDENTE"
-  ]
+  ],
+  "revisar": true
  },
  {
   "cnae": "8592-9/99",
@@ -18725,7 +18751,8 @@
   "mei_iss": "S",
   "mei_ocup": [
    "INSTRUTOR(A) DE ARTE E CULTURA EM GERAL INDEPENDENTE"
-  ]
+  ],
+  "revisar": true
  },
  {
   "cnae": "8593-7/00",
@@ -18742,7 +18769,8 @@
   "mei_iss": "S",
   "mei_ocup": [
    "INSTRUTOR(A) DE IDIOMAS INDEPENDENTE"
-  ]
+  ],
+  "revisar": true
  },
  {
   "cnae": "8599-6/01",
@@ -18757,7 +18785,8 @@
   "base": "LC 123/2006, art. 18, §§5º-B/5º-D/5º-E/5º-F (inclui regra residual do §5º-F c/c art. 17, §2º) + Anexo III",
   "mei": "",
   "mei_iss": "",
-  "mei_ocup": []
+  "mei_ocup": [],
+  "revisar": true
  },
  {
   "cnae": "8599-6/02",
@@ -18772,7 +18801,8 @@
   "base": "LC 123/2006, art. 18, §§5º-B/5º-D/5º-E/5º-F (inclui regra residual do §5º-F c/c art. 17, §2º) + Anexo III",
   "mei": "",
   "mei_iss": "",
-  "mei_ocup": []
+  "mei_ocup": [],
+  "revisar": true
  },
  {
   "cnae": "8599-6/03",
@@ -18789,7 +18819,8 @@
   "mei_iss": "S",
   "mei_ocup": [
    "INSTRUTOR(A) DE INFORMÁTICA INDEPENDENTE"
-  ]
+  ],
+  "revisar": true
  },
  {
   "cnae": "8599-6/04",
@@ -18823,7 +18854,8 @@
   "mei_iss": "S",
   "mei_ocup": [
    "INSTRUTOR(A) DE CURSOS PREPARATÓRIOS INDEPENDENTE"
-  ]
+  ],
+  "revisar": true
  },
  {
   "cnae": "8599-6/99",

@@ -1,6 +1,6 @@
-import json, csv, os
+import json, csv, os, re
 
-BASE = 'simples-nacional-prototipo/'
+BASE = os.path.dirname(os.path.abspath(__file__)) + os.sep
 cls = json.load(open(BASE + 'classificacao_simples_23.json', encoding='utf-8'))
 mei = json.load(open(BASE + 'mei_cnaes.json', encoding='utf-8'))
 
@@ -40,18 +40,24 @@ for x in cls:
         x['mei_iss'] = ''
         x['mei_ocup'] = []
 
+# Linhas cujo proprio motivo manda validar/verificar ainda nao foram revisadas.
+for x in cls:
+    x.pop('revisar', None)
+    if re.search(r'validar|verificar', x.get('motivo', ''), re.I):
+        x['revisar'] = True
+
 json.dump(cls, open(BASE + 'classificacao_simples_23.json', 'w', encoding='utf-8'),
           ensure_ascii=False, indent=1)
 with open(BASE + 'classificacao_simples_23.csv', 'w', encoding='utf-8-sig', newline='') as f:
     w = csv.DictWriter(f, fieldnames=['cnae', 'id', 'descricao', 'divisao', 'status', 'anexos',
-                                      'fatorR', 'mei', 'mei_iss', 'motivo', 'origem', 'base'])
+                                      'fatorR', 'mei', 'mei_iss', 'motivo', 'origem', 'base', 'revisar'])
     w.writeheader()
     for x in cls:
         r = dict(x)
         r['mei_ocup'] = ' | '.join(x.get('mei_ocup', []))
         w.writerow({k: r.get(k, '') for k in
                     ['cnae', 'id', 'descricao', 'divisao', 'status', 'anexos',
-                     'fatorR', 'mei', 'mei_iss', 'motivo', 'origem', 'base']})
+                     'fatorR', 'mei', 'mei_iss', 'motivo', 'origem', 'base', 'revisar']})
 
 # rebuild dados.js
 base = json.load(open(BASE + 'cnaes.json', encoding='utf-8'))

@@ -1,27 +1,58 @@
 # Consulta CNAE — Enquadramento no Simples Nacional
 
-Dashboard moderno: barra de busca global, KPIs clicáveis (total/optantes/ambíguos/vedados/MEI), filtros laterais (situação/anexo/divisão/Fator R/MEI), tabela de resultados com ficha em painel lateral, exportação CSV e simulador de alíquota.
+Dashboard estático (GitHub Pages) para consultar as subclasses CNAE 2.3 e ver se a atividade permite o Simples Nacional, qual anexo se aplica, se há Fator R e se permite MEI. Tem busca e filtros, exportação CSV, análise local de cartão CNPJ (PDF/imagem/TXT) e simulador de alíquota efetiva. Tudo roda no navegador.
+
+## Números da base
+
+- 1.338 linhas = 1.331 subclasses 2.3 + 9900-8/00 + 6 aliases 2.2 desativados
+- OPTANTE 1.123 · AMBÍGUO 95 · VEDADO 114 · DESATIVADA 6
+- 32 linhas marcadas `revisar` (motivo manda "validar/verificar") aparecem com o selo **VALIDAR** na tabela, na ficha e no veredito do arquivo
 
 ## MEI (Anexo XI, Res. CGSN 140/2018, Tabelas A e B)
+
 - 471 ocupações → **351 CNAEs** (`mei_cnaes.json`), todos presentes na base 2.3
-- 343 OPTANTE + 8 AMBÍGUO (Anexo V, Fator R não se aplica ao DAS fixo do MEI); 3 exceções aplicadas sobre a regra geral (1220-4/99 fumo, 4929-9/02 fretamento metropolitano, 9700-5/00 diarista)
+- 345 OPTANTE + 6 AMBÍGUO; 3 exceções aplicadas sobre a regra geral (1220-4/99 fumo, 4929-9/02 fretamento metropolitano, 9700-5/00 diarista)
 - Selo MEI na tabela e na ficha (ocupações + ISS no DAS) + filtro "Somente MEI" + CSV com colunas mei/mei_iss/mei_ocupacoes
 
 ## Arquivos
-- `index.html` — painel VMF (consulta unificada + análise + simulador)
-- `classificacao_simples_23.json/csv` — 1.331 subclasses do anexo 2.3 classificadas: OPTANTE / AMBIGUO / VEDADO + anexos + Fator R + motivo
-- `anexo_subclasses23.json` — extração do arquivo `CNAE_Subclasses_2_3_Estrutura_Detalhada.md`
-- `cnaes.json` — descrições/notas IBGE (API oficial, 1.332)
+
+- `index.html` — painel (consulta + análise de arquivo + simulador)
+- `logic.js` — lógica pura compartilhada com os testes (extração de CNAE, faixas, veredito)
+- `classificacao_simples_23.json/csv` — subclasses classificadas: status + anexos + Fator R + motivo + MEI
+- `anexo_subclasses23.json` — extração de `CNAE_Subclasses_2_3_Estrutura_Detalhada.md`
+- `cnaes.json` — descrições/notas IBGE (API oficial)
+- `mei_cnaes.json` — ocupações MEI (Anexo XI)
 - `build_classificacao.py` — motor de classificação (curadoria + regras por divisão)
+- `fix_classificacao.py` — adiciona 9900-8/00 e os 6 aliases 2.2
+- `mei_update.py` — cruza o Anexo XI, grava `revisar` e reconstrói `dados.js`
+- `build_dados.py` — gera `dados.js`
+- `build.py` — roda a pipeline completa na ordem correta
+- `sw.js` — service worker (network-first para HTML/dados, cache para o resto)
 
-## Resultado da análise (recomeço pelo arquivo correto)
-- Planilha Excel 2.401 linhas = ~21 seções + ~87 divisões + ~285 grupos + ~673 classes + 1.331 subclasses + cabeçalhos + ~40 linhas de RESUMO ALTERAÇÕES/preferenciais. Não são 2.401 CNAEs.
-- TOTAL 1338 na classificação = 1.331 subclasses 2.3 + 9900-8/00 (IBGE, sem linha na planilha) + 6 aliases 2.2 desativados
-- OPTANTE 1116 · AMBIGUO 99 · VEDADO 117 · DESATIVADA 6 (1610-2/01, 1610-2/02, 4541-2/05, 4713-0/01, 4713-0/03, 5611-2/02 → ver correspondentes 2.3)
-- Vedados concentrados: div 64 (36), 66 (18), 94 (9), 35 (8), 65 (8), 84 (8), 49 (6)
-- Ambíguos concentrados: div 86 saúde (37), 74 (14), 46 representantes (12), 71 (8), 73 (8), 62 TI (5)
+## Build
 
-Critérios: art. 17 (vedado), Fator R / multi-anexo (ambíguo), resto optante com anexo I–V (LC 123/147/155, CGSN 140/2018).
+```bash
+python build.py
+```
 
-## Uso
-`python3 -m http.server 8000 --directory simples-nacional-prototipo` → `http://localhost:8000/`
+Equivale a `build_classificacao.py` → `fix_classificacao.py` → `mei_update.py` → `build_dados.py`. Rodar só as duas pontas perde MEI, aliases e o campo `revisar`.
+
+## Testes
+
+```bash
+node --test test_logic.mjs
+```
+
+Cobrem extração de CNAE (`0000-0/00`, `00.00-0-00`, 7 dígitos, sem falsos positivos em CNPJ/telefone), teto de R$ 4,8 mi, piso zero e os vereditos (desconhecido, MEI único, múltiplas atividades MEI, vedado e vedado a validar).
+
+## Uso local
+
+```bash
+python3 -m http.server 8000
+```
+
+Abra `http://localhost:8000/`. TXT funciona via `file://`; PDF/imagem precisam de HTTP.
+
+## Critérios
+
+Art. 17 (vedado), Fator R / multi-anexo (ambíguo), resto optante com anexo I–V (LC 123/147/155, CGSN 140/2018). Ferramenta educacional — não substitui parecer técnico ou assessoria contábil.

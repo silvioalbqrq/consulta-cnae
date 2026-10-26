@@ -1,8 +1,12 @@
-import json, re, csv
+import json, re, csv, os
 
-base = json.load(open('simples-nacional-prototipo/cnaes.json', encoding='utf-8'))
+BASE = os.path.dirname(os.path.abspath(__file__))
+def P(name):
+    return os.path.join(BASE, name)
+
+base = json.load(open(P('cnaes.json'), encoding='utf-8'))
 byId = {b['id']: b for b in base}
-anexo = json.load(open('simples-nacional-prototipo/anexo_subclasses23.json', encoding='utf-8'))
+anexo = json.load(open(P('anexo_subclasses23.json'), encoding='utf-8'))
 
 MAP = {
 "0111301":{"a":["I"]},"4511101":{"a":["I"]},"4511102":{"a":["I"]},"4511103":{"a":["I"]},
@@ -171,8 +175,8 @@ for a in anexo:
         "base": base_legal(status, ",".join(anexos), fr),
     })
 
-json.dump(out, open("simples-nacional-prototipo/classificacao_simples_23.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-with open("simples-nacional-prototipo/classificacao_simples_23.csv", "w", encoding="utf-8-sig", newline="") as f:
+json.dump(out, open(P("classificacao_simples_23.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+with open(P("classificacao_simples_23.csv"), "w", encoding="utf-8-sig", newline="") as f:
     w = csv.DictWriter(f, fieldnames=["cnae","id","descricao","divisao","status","anexos","fatorR","motivo","origem","base"])
     w.writeheader()
     w.writerows(out)
@@ -190,4 +194,4 @@ print("amb por divisao", am.most_common(12))
 # exemplos
 for x in out:
     if x["cnae"] in ("4723-7/00","6201-5/01","6911-7/01","3513-1/00","7810-8/00"):
-        print(x)
+        print(x["cnae"], x["status"], x["anexos"])

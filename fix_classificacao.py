@@ -1,6 +1,7 @@
-import json, csv
+import json, csv, os
 
-p = 'simples-nacional-prototipo/classificacao_simples_23.json'
+BASE = os.path.dirname(os.path.abspath(__file__))
+p = os.path.join(BASE, 'classificacao_simples_23.json')
 cls = json.load(open(p, encoding='utf-8'))
 ids = set(x['id'] for x in cls)
 if '9900800' not in ids:
@@ -20,7 +21,7 @@ for nid, (cod, novo) in aliases.items():
                     'motivo': 'Codigo 2.2 desativado - usar ' + novo, 'origem': 'alias-2.2',
                     'base': 'CNAE 2.2 desativado (IBGE/Concla) - usar o correspondente 2.3'})
 json.dump(cls, open(p, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
-with open('simples-nacional-prototipo/classificacao_simples_23.csv', 'w', encoding='utf-8-sig', newline='') as f:
+with open(os.path.join(BASE, 'classificacao_simples_23.csv'), 'w', encoding='utf-8-sig', newline='') as f:
     w = csv.DictWriter(f, fieldnames=['cnae', 'id', 'descricao', 'divisao', 'status', 'anexos', 'fatorR', 'motivo', 'origem', 'base'])
     w.writeheader()
     w.writerows(cls)
