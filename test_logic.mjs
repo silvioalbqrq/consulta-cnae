@@ -18,6 +18,20 @@ test("extrai vários códigos e ignora CNPJ/telefone", () => {
   assert.deepEqual(L.extractCnaes(txt).map(c => c.raw), ["4530705"]);
 });
 
+test("CNAE com mais de 7 dígitos usa os 7 primeiros", () => {
+  const valido = (c) => c === "9511800" || c === "4751201";
+  // 951180001 (8 dígitos) -> 9511800
+  assert.deepEqual(
+    L.extractCnaes("951180001 - Reparação de computadores", valido).map(c => c.raw),
+    ["9511800"]
+  );
+  // vários códigos de 8 dígitos; só os que existem na base são retornados
+  assert.deepEqual(
+    L.extractCnaes("951180001 475120101 99999999", valido).map(c => c.raw),
+    ["9511800", "4751201"]
+  );
+});
+
 test("rateFor respeita o teto de R$ 4,8 mi e o piso zero", () => {
   assert.equal(L.rateFor("III", 5000000), null);
   assert.equal(L.rateFor("III", 0).ef, 0);

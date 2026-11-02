@@ -14,8 +14,8 @@ function extractCnaes(text,exists){
   let m;
   const reF=/\b(\d{2})[.\-–—/]?(\d{2})[.\-–—/]?(\d)[.\-–—/]?(\d{2})\b/g;
   while((m=reF.exec(text))){push(m[1]+m[2]+m[3]+m[4],m.index);}
-  const re7=/(?<!\d)(\d{7})(?!\d)/g;
-  while((m=re7.exec(text))){if(has(m[1]))push(m[1],m.index);}
+  const re7=/(?<!\d)(\d{7,})(?!\d)/g;
+  while((m=re7.exec(text))){const d7=m[1].slice(0,7);if(has(d7))push(d7,m.index);}
   const seen=new Set(),out=[];
   for(const f of found){if(!seen.has(f.raw)){seen.add(f.raw);out.push(f);}}
   return out.sort((a,b)=>a.pos-b.pos);
