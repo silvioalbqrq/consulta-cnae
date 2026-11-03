@@ -88,3 +88,22 @@ test("reparação e manutenção de veículos é Anexo III (não I)", () => {
   }
   assert.equal(byId["4530703"].anexos, "I", "comércio de peças continua no Anexo I");
 });
+
+test("âncoras de classificação por anexo", () => {
+  const fs = require("node:fs");
+  const cls = JSON.parse(fs.readFileSync(new URL("./classificacao_simples_23.json", import.meta.url), "utf8"));
+  const byId = Object.fromEntries(cls.map(x => [x.id, x]));
+  const anexo = (id) => byId[id].anexos;
+  assert.equal(anexo("0111301"), "I", "agropecuária");
+  assert.equal(anexo("4711301"), "I", "comércio");
+  assert.equal(anexo("5611201"), "I", "alimentação");
+  assert.equal(anexo("3311200"), "III", "divisão 33 é serviço, não indústria");
+  assert.equal(anexo("3321000"), "III", "instalação de máquinas");
+  assert.equal(anexo("3250706"), "III", "prótese dentária é serviço");
+  assert.equal(byId["3250706"].fatorR, "SIM");
+  assert.equal(anexo("7500100"), "V", "veterinária parte do Anexo V");
+  assert.equal(byId["7500100"].fatorR, "SIM");
+  for (const id of ["8630501", "8630503", "6821802", "6822600", "9313100", "7319001", "6202300"]) {
+    assert.equal(byId[id].fatorR, "SIM", id + " depende do Fator R");
+  }
+});

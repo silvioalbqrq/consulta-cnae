@@ -19,28 +19,30 @@ MAP = {
 "4723700":{"a":["I"]},"4751201":{"a":["I"]},"4751202":{"a":["III"]},
 "5611201":{"a":["I"]},"5611203":{"a":["I"]},"5611204":{"a":["I"]},"5620102":{"a":["III"]},
 "5811500":{"a":["III"]},"5821200":{"a":["V"],"fatorR":True},"5911101":{"a":["III"]},
-"6201501":{"a":["V"],"fatorR":True},"6202300":{"a":["III"]},"6203100":{"a":["V"],"fatorR":True},"6204000":{"a":["V"],"fatorR":True},
+"6201501":{"a":["V"],"fatorR":True},"6202300":{"a":["III"],"fatorR":True},"6203100":{"a":["V"],"fatorR":True},"6204000":{"a":["V"],"fatorR":True},
 "6209100":{"a":["V"],"fatorR":True},"6311900":{"a":["V"],"fatorR":True},"6319400":{"a":["V"],"fatorR":True},
 "6619302":{"a":["III"]},"6621501":{"a":["V"],"fatorR":True},"6622300":{"a":["III"]},
-"6810201":{"a":["III"]},"6821801":{"a":["III"],"fatorR":True},"6911701":{"a":["IV"]},
+"3250706":{"a":["III"],"fatorR":True},
+"6810201":{"a":["III"]},"6821801":{"a":["III"],"fatorR":True},"6821802":{"a":["III"],"fatorR":True},
+"6822600":{"a":["III"],"fatorR":True},"6911701":{"a":["IV"]},
 "6920601":{"a":["III"]},"7020400":{"a":["V"],"fatorR":True},
 "7111100":{"a":["III"],"fatorR":True},"7112000":{"a":["V"],"fatorR":True},"7311400":{"a":["V"],"fatorR":True},"7320300":{"a":["V"],"fatorR":True},
-"7319001":{"a":["III"],"m":"Curadoria: montagem de estandes p/ feiras - Anexo III (art. 18, §5º-D, IX)"},
+"7319001":{"a":["III"],"fatorR":True,"m":"Curadoria: montagem de estandes p/ feiras - Anexo III (art. 18, §5º-D, IX)"},
 "7319002":{"a":["III"],"m":"Curadoria: promocao de vendas - Anexo III (art. 18, §5º-F; COSIT 13/2022)"},
 "7319003":{"a":["III"],"m":"Curadoria: marketing direto - Anexo III (art. 18, §5º-F; COSIT 13/2022)"},
 "7319099":{"a":["III"],"m":"Curadoria: publicidade executiva/veiculacao - Anexo III (art. 18, §5º-F c/c art. 17, §2º)"},
 "7410202":{"a":["IV","V"],"fatorR":True},"7410203":{"a":["V"],"fatorR":True},"7420001":{"a":["V"],"fatorR":True},"7490101":{"a":["V"],"fatorR":True},
-"7500100":{"a":["III"]},"7711000":{"a":["III"]},"7739099":{"a":["III"]},
+"7500100":{"a":["V"],"fatorR":True},"7711000":{"a":["III"]},"7739099":{"a":["III"]},
 "7810800":{"vedado":True},"7820500":{"vedado":True},"7830200":{"vedado":True},
 "8011101":{"a":["IV"]},"8121400":{"a":["IV"]},"8111700":{"a":["IV"]},"8211300":{"a":["III"]},
 "8299799":{"a":["V"],"fatorR":True},"8511200":{"a":["III"]},"8531700":{"a":["V"],"fatorR":True},
 "8541400":{"a":["III"]},"8599604":{"a":["III"]},"8599699":{"a":["III"]},
-"8610101":{"a":["III"]},"8630501":{"a":["III"]},"8630503":{"a":["III"]},"8630504":{"a":["III"],"fatorR":True},
+"8610101":{"a":["III"]},"8630501":{"a":["III"],"fatorR":True},"8630503":{"a":["III"],"fatorR":True},"8630504":{"a":["III"],"fatorR":True},
 "8640201":{"a":["V"],"fatorR":True},"8640202":{"a":["V"],"fatorR":True},"8640204":{"a":["V"],"fatorR":True},
 "8640205":{"a":["V"],"fatorR":True},"8640206":{"a":["III","V"],"fatorR":True},"8640207":{"a":["III","V"],"fatorR":True},
 "8640208":{"a":["III","V"],"fatorR":True},"8640209":{"a":["III","V"],"fatorR":True},"8640210":{"a":["III"],"fatorR":True},
 "8650007":{"a":["V"],"fatorR":True},"8690901":{"a":["III"]},
-"9001999":{"a":["III"]},"9313100":{"a":["III"]},"9329804":{"a":["III"]},
+"9001999":{"a":["III"]},"9313100":{"a":["III"],"fatorR":True},"9329804":{"a":["III"]},
 "9501180":{"a":["III"]},"9602501":{"a":["III"]},
 "3513100":{"vedado":True},"3511500":{"vedado":True},"3512300":{"vedado":True},"3520400":{"vedado":True},
 "6010100":{"vedado":True},"6021700":{"vedado":True},
@@ -71,6 +73,8 @@ def enquadrar(cid, div, desc):
         dn = 0
     if 1 <= dn <= 3:
         return True, ["I"], False, "Agro/pecuária/pesca — Anexo I (ou II se industrializar)", "regra"
+    if d2 == "33":
+        return True, ["III"], False, "Serviços de instalação, reparos e manutenção em geral — Anexo III", "regra"
     if 5 <= dn <= 33:
         if cid.startswith("25501") or cid.startswith("20924") or cid.startswith("12204") or cid.startswith("11119") or cid.startswith("11135"):
             return False, [], False, "Industrial com vedação potencial (armas/explosivos/fumo/bebidas em escala) — validar", "regra"
@@ -172,6 +176,14 @@ for a in anexo:
     base = base_legal(status, ",".join(anexos), fr)
     if re.match(r"^(4520|45439)", cid):
         base = "LC 123/2006, art. 18, §5º-B, IX + Anexo III (reparos e manutenção em geral)"
+    elif cid.startswith("33"):
+        base = "LC 123/2006, art. 18, §5º-B, IX + Anexo III (instalação, reparos e manutenção em geral)"
+    elif cid == "3250706":
+        base = "LC 123/2006, art. 18, §5º-D, XIV e §5º-M, II + Anexo III (Fator R define III ou V)"
+    elif cid in ("6822600", "9313100", "7319001", "6202300"):
+        base = "LC 123/2006, art. 18, §5º-D e §5º-M, II + Anexo III (Fator R define III ou V)"
+    elif cid in ("8630501", "8630503"):
+        base = "LC 123/2006, art. 18, §5º-B, XIX e §5º-M, I + Anexo III (Fator R define III ou V)"
     out.append({
         "cnae": a["cnae"], "id": cid, "descricao": desc, "divisao": div,
         "status": status, "anexos": ",".join(anexos),

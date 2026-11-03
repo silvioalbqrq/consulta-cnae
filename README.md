@@ -5,7 +5,7 @@ Dashboard estático (GitHub Pages) para consultar as subclasses CNAE 2.3 e ver s
 ## Números da base
 
 - 1.338 linhas = 1.331 subclasses 2.3 + 9900-8/00 + 6 aliases 2.2 desativados
-- OPTANTE 1.123 · AMBÍGUO 95 · VEDADO 114 · DESATIVADA 6
+- OPTANTE 1.114 · AMBÍGUO 104 · VEDADO 114 · DESATIVADA 6
 - 32 linhas marcadas `revisar` (motivo manda "validar/verificar") aparecem com o selo **VALIDAR** na tabela, na ficha e no veredito do arquivo
 
 ## MEI (Anexo XI, Res. CGSN 140/2018, Tabelas A e B)

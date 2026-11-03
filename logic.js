@@ -93,6 +93,7 @@ function verdictFor(rows){
       cls="ok";ico="✅";
       txt="<b>PODE OPTAR pelo Simples Nacional</b> — todas as atividades permitem.";
     }
+    txt+=" <small>Análise por CNAE: outros impedimentos do art. 17 (sócios, débitos, capital estrangeiro) não são verificados.</small>";
   }
   let meiTxt="";
   if(unk.length)meiTxt="🧾 <b>MEI não confirmado</b> — há código(s) fora da base 2.3.";
@@ -100,6 +101,7 @@ function verdictFor(rows){
   else if(known.length&&meiOk.length===known.length)meiTxt="🧾 As <b>"+known.length+"</b> atividades constam no Anexo XI, mas o <b>MEI exige uma única ocupação</b> — não é possível confirmar com mais de uma atividade.";
   else if(meiOk.length)meiTxt="🧾 <b>Permite MEI apenas em:</b> "+meiOk.map(r=>fmtC(r.cnae)).join(", ")+" — com as demais atividades combinadas, a empresa <b>não</b> pode ser MEI.";
   else if(known.length)meiTxt="🧾 Nenhuma atividade permite MEI.";
+  if(meiTxt)meiTxt+=" <small>O limite anual de faturamento do MEI não é verificado.</small>";
   return {cls,ico,txt,meiTxt,anx,ved,amb,unk,known,meiOk};
 }
 
