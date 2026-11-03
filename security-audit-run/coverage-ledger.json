@@ -1,0 +1,143 @@
+{
+  "schema": "coverage-ledger",
+  "version": "1",
+  "target": "consulta-cnae-site",
+  "source_ref": "main@5968607",
+  "profile": "standard",
+  "units": [
+    {
+      "unit_id": "U-1",
+      "surface": "client-side/DOM-rendering",
+      "boundary": "arquivo-enviado -> innerHTML #aout / drawer",
+      "attack_class": "DOM-based XSS",
+      "source_file": "index.html",
+      "lines": [488, 512, 519, 520, 524],
+      "status": "hunted",
+      "finding_refs": ["F-001"],
+      "notes": "esc() usado para razao/cnpj/nome-arquivo; descricao/base da base injetados SEM esc() na linha 519-520."
+    },
+    {
+      "unit_id": "U-2",
+      "surface": "subresource / CDN",
+      "boundary": "cdn.jsdelivr.net -> tesseract.js (OCR)",
+      "attack_class": "Supply-chain / subresource integrity",
+      "source_file": "index.html",
+      "lines": [471],
+      "status": "hunted",
+      "finding_refs": ["F-002"],
+      "notes": "Script de terceiros carregado sem atributo integrity (sem SRI)."
+    },
+    {
+      "unit_id": "U-3",
+      "surface": "dynamic code loading",
+      "boundary": "fetch dados.js -> (0,eval)(t)",
+      "attack_class": "Dynamic execution",
+      "source_file": "index.html",
+      "lines": [317, 318],
+      "status": "hunted",
+      "finding_refs": [],
+      "notes": "dados.js é arquivo local versionado (fonte confiável). Mantido como nota de hardening, não como finding confirmado."
+    },
+    {
+      "unit_id": "U-4",
+      "surface": "CSV export",
+      "boundary": "analyzeText -> CSV download (btnCsv)",
+      "attack_class": "CSV injection / formula injection",
+      "source_file": "index.html",
+      "lines": [387, 389],
+      "status": "hunted",
+      "finding_refs": ["F-003"],
+      "notes": "descricao / base_legal / motivo injetados em célula CSV sem aspas de fórmula; base controlada pelo desenvolvedor."
+    },
+    {
+      "unit_id": "U-5",
+      "surface": "service worker",
+      "boundary": "sw.js fetch intercept same-origin",
+      "attack_class": "Service-worker scope takeover / cache poisoning",
+      "source_file": "sw.js",
+      "lines": [1, 2, 5, 10, 17],
+      "status": "hunted",
+      "finding_refs": [],
+      "notes": "Apenas assets da mesma origem são cacheados. Não há origem cruzada nem importScripts. Não é finding."
+    },
+    {
+      "unit_id": "U-6",
+      "surface": "PDF processing (local)",
+      "boundary": "PDF.js (vendado) processa arquivo enviado localmente",
+      "attack_class": "Malicious PDF -> renderer exploit",
+      "source_file": "index.html",
+      "lines": [448, 469],
+      "status": "hunted",
+      "finding_refs": ["NV-001"],
+      "notes": "PDF malicioso poderia explorar vulnerabilidade do PDF.js. Versão vendada não auditada contra CVEs. needs_validation."
+    },
+    {
+      "unit_id": "U-7",
+      "surface": "auth / session",
+      "boundary": "nenhum servidor / sem login",
+      "attack_class": "CSRF / session fixation / credential scope",
+      "source_file": "index.html",
+      "lines": [],
+      "status": "hunted",
+      "finding_refs": ["R-001", "R-002"],
+      "notes": "Site estático público, sem autenticação, sem cookies de sessão, sem state-changing no servidor. Rejeitado."
+    },
+    {
+      "unit_id": "U-8",
+      "surface": "LLM / agent / RAG",
+      "boundary": "nenhum modelo de linguagem no site",
+      "attack_class": "Prompt injection / tool misuse / output rendering",
+      "source_file": "index.html",
+      "lines": [],
+      "status": "hunted",
+      "finding_refs": ["R-003"],
+      "notes": "Não há LLM, RAG, MCP, agent loop nem consumo de output de modelo. Tesseract.js é OCR local, não LLM. Rejeitado."
+    },
+    {
+      "unit_id": "U-9",
+      "surface": "secrets / credentials",
+      "boundary": "código-fonte do site",
+      "attack_class": "API-key exposure / hardcoded secret",
+      "source_file": "index.html, logic.js, sw.js",
+      "lines": [],
+      "status": "hunted",
+      "finding_refs": ["R-004"],
+      "notes": "Não há chaves de API, tokens ou secrets hardcoded. Tesseract via CDN público não requer chave. Rejeitado."
+    },
+    {
+      "unit_id": "U-10",
+      "surface": "HTTP/cache/auth protocol",
+      "boundary": "GitHub Pages estático, sem proxy/reverse-proxy no repo",
+      "attack_class": "Request smuggling / cache poisoning / header injection",
+      "source_file": "index.html",
+      "lines": [],
+      "status": "hunted",
+      "finding_refs": ["NV-002"],
+      "notes": "Sem servidor próprio no repo. Cabeçalhos de segurança (CSP, X-Frame-Options) dependem do deployment GitHub Pages. needs_validation."
+    },
+    {
+      "unit_id": "U-11",
+      "surface": "resource exhaustion / availability",
+      "boundary": "processamento de arquivo no navegador do usuário",
+      "attack_class": "Denial of service via arquivo grande / OCR pesado",
+      "source_file": "index.html",
+      "lines": [529, 449, 471],
+      "status": "hunted",
+      "finding_refs": [],
+      "notes": "Limite de 15 MB e 10 páginas já aplicados. Impacto limitado ao próprio usuário. Não é finding de segurança cruzada."
+    },
+    {
+      "unit_id": "U-12",
+      "surface": "data isolation / lifecycle",
+      "boundary": "processamento local, nada armazenado no servidor",
+      "attack_class": "Cross-tenant data leak / stale auth in storage",
+      "source_file": "index.html",
+      "lines": [],
+      "status": "hunted",
+      "finding_refs": [],
+      "notes": "Não há multi-tenancy, não há persistência de dados sensíveis, não há uso de localStorage/IndexedDB para dados de terceiros. Não é finding."
+    }
+  ],
+  "coverage_statement": "Single pass completed over all input surfaces and attack classes in scope. One run does not exhaust the target; repeat runs recommended after changes to dados.js, index.html, or dependencies.",
+  "generated_at": "2026-11-02"
+}

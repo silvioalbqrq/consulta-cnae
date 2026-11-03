@@ -1,0 +1,123 @@
+{
+  "schema": "findings",
+  "version": "1",
+  "target": "consulta-cnae-site",
+  "source_ref": "main@5968607",
+  "run_id": "run-1",
+  "confirmed": [
+    {
+      "fingerprint": "F-001",
+      "verdict": "confirmed",
+      "severity": "low",
+      "title": "DOM renderização inconsistente: descricao e base injetadas sem escape HTML",
+      "source": "index.html analyzeText(), linhas 519-520",
+      "lower_trust_principal": "autor da base de dados dados.js (desenvolvedor / qualquer pessoa com gravação no repo)",
+      "accepted_input": "campos descricao e base de classificacao_simples_23.json / cnaes.json",
+      "intended_control": "escape HTML antes de injetar conteúdo no DOM",
+      "crossed_boundary": "cliente (navegador do usuário) renderiza conteúdo da base como HTML",
+      "affected_principal_or_resource": "qualquer usuário que visualize a análise de um CNAE cuja descricao/base contenha caracteres HTML",
+      "concrete_result": "conteúdo da base injetado diretamente via innerHTML sem esc(); se descricao ou base contiverem tags < > &, o layout da tabela é quebrado e existe vetor de auto-XSS / quebra de renderização",
+      "evidence": "Linha 519: +(r.x?r.x.descricao:\"<i>não encontrado</i>\")+\"<td>... Linha 520: +(r.x&&r.x.base?r.x.base:\"—\")+\"</small></td>\". Outros campos na mesma função (info.razao, info.cnpj, nome do arquivo) já usam esc().",
+      "reproduction": "Editar classificacao_simples_23.json inserindo descricao com '<img src=x onerror=alert(1)>' e recarregar a análise.",
+      "smallest_fix": "Aplicar esc() em r.x.descricao e r.x.base na linha 519-520 de index.html, consistente com os demais campos de analyzeText.",
+      "regression_test": "adicionar caso em test_logic.mjs / ou teste de render confirmando que descricao com '<script>' é escapado no HTML de saída."
+    },
+    {
+      "fingerprint": "F-002",
+      "verdict": "confirmed",
+      "severity": "medium",
+      "title": "Subresource de terceiros sem integridade (ausência de SRI) — tesseract.js via CDN",
+      "source": "index.html, linha 471",
+      "lower_trust_principal": "operador do CDN jsdelivr (terceiro, fora do repositório)",
+      "accepted_input": "resposta HTTP do script https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js",
+      "intended_control": "atributo integrity (SRI) verificando o hash do script antes da execução",
+      "crossed_boundary": "origem silvioalbqrq.github.io executa código originado em cdn.jsdelivr.net",
+      "affected_principal_or_resource": "todos os visitantes do site, se o CDN for comprometido",
+      "concrete_result": "execução de JavaScript arbitrário no contexto de origem do site para todos os usuários, se o conteúdo servido pelo jsdelivr for alterado por atacante",
+      "evidence": "Linha 471: await loadScriptOnce(\"https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js\"); sem parâmetro integrity. Outros assets (pdf.min.js, pdf.worker.min.js) são vendados localmente.",
+      "reproduction": "inspecionar o atributo do elemento <script> carregado do jsdelivr; confirmar ausência de integrity.",
+      "smallest_fix": "adicionar atributo integrity com o hash SHA-384/256 do tesseract.js@5 (ou vendorizar o arquivo localmente, como já feito com pdf.min.js).",
+      "regression_test": "verificar que o <script> do tesseract carrega com integrity; falhar o build se faltar."
+    },
+    {
+      "fingerprint": "F-003",
+      "verdict": "confirmed",
+      "severity": "low",
+      "title": "CSV injection potencial via células descricao / base_legal / motivo",
+      "source": "index.html btnCsv, linhas 387-389",
+      "lower_trust_principal": "autor da base de dados (conteúdo de células do CSV)",
+      "accepted_input": "campos descricao, base_legal, motivo exportados no CSV",
+      "intended_control": "escapar ou prefixar células que iniciem com caracteres de fórmula (=, +, -, @)",
+      "crossed_boundary": "usuário abre o CSV exportado em Excel / planilha compatível",
+      "affected_principal_or_resource": "usuário que abre o arquivo consulta-cnae.csv gerado pelo site",
+      "concrete_result": "células que iniciam com caracteres de fórmula podem ser interpretadas como fórmulas pelo Excel (CSV injection), se a base contiver tais valores",
+      "evidence": "Linha 389: os campos são inseridos no CSV com aspas simples para aspas duplas internas, mas sem prefixo de escape de fórmula (ex. '= ou 'tab). Base controlada pelo desenvolvedor reduz a probabilidade.",
+      "reproduction": "inserir na base descricao iniciando com '=CMD|' e exportar CSV; abrir no Excel.",
+      "smallest_fix": "prefixar com apóstrofo (') ou sanitizar células que iniciem com =, +, -, @ antes de gravar no CSV.",
+      "regression_test": "teste de export confirmando que células iniciando com '=' são prefixadas."
+    }
+  ],
+  "needs_validation": [
+    {
+      "fingerprint": "NV-001",
+      "verdict": "needs_validation",
+      "title": "PDF malicioso processado pelo PDF.js vendado localmente",
+      "unresolved_fact": "a versão vendada de pdf.min.js / pdf.worker.min.js contém vulnerabilidades conhecidas de renderer (execução de código ao abrir PDF maligno)?",
+      "source": "index.html textFromPdf (linha 448) + pdf.min.js + pdf.worker.min.js",
+      "affected_boundary": "arquivo enviado pelo usuário -> PDF.js executa no contexto do navegador do próprio usuário",
+      "safe_check": "consultar banco de vulnerabilidades (CVE / advisories) para a versão exata de pdf.min.js vendada; se houver CVE de renderer, atualizar o arquivo vendado.",
+      "owner_action": "verificar versão do pdf.min.js contra advisories conhecidos; considerar isolar o processamento em Web Worker sandboxed."
+    },
+    {
+      "fingerprint": "NV-002",
+      "verdict": "needs_validation",
+      "title": "Ausência de cabeçalhos de segurança (CSP, X-Frame-Options, etc.) no deployment",
+      "unresolved_fact": "o deployment GitHub Pages aplica cabeçalhos de segurança (Content-Security-Policy, X-Frame-Options, Referrer-Policy)?",
+      "source": "repositório estático sem cabeçalhos de resposta configuráveis via HTML",
+      "affected_boundary": "navegador dos usuários acessando https://silvioalbqrq.github.io/consulta-cnae/",
+      "safe_check": "inspecionar headers de resposta do deployment ao vivo; ausência de CSP/X-Frame-Options é um achado de hardening de deployment.",
+      "owner_action": "configurar headers de segurança no provedor de hospedagem (ou via service worker / headers de resposta, se suportado)."
+    },
+    {
+      "fingerprint": "NV-003",
+      "verdict": "needs_validation",
+      "title": "Uso de (0,eval)(t) para carregar dados.js",
+      "unresolved_fact": "existe algum caminho onde dados.js poderia ser sobrescrito ou injetado por fonte não confiável antes do eval?",
+      "source": "index.html linha 317-318",
+      "affected_boundary": "execução de JS do arquivo dados.js no contexto da aplicação",
+      "safe_check": "confirmar que dados.js é sempre servido do próprio repo e não aceita gravação externa; avaliar substituir por <script src> estático.",
+      "owner_action": "substituir o fetch+eval por inclusão estática de <script src=\"dados.js\">, removendo o vetor de execução dinâmica."
+    }
+  ],
+  "rejected": [
+    {
+      "fingerprint": "R-001",
+      "verdict": "rejected",
+      "title": "CSRF / autenticação / sessão",
+      "reason_disproved": "site estático público, sem login, sem cookies de sessão, sem state-changing no servidor, não há autenticação para burlar.",
+      "source": "index.html (nenhum endpoint de servidor)"
+    },
+    {
+      "fingerprint": "R-002",
+      "verdict": "rejected",
+      "title": "SQL injection",
+      "reason_disproved": "não há banco de dados nem consulta SQL no site; dados vêm de arquivos JSON estáticos locais.",
+      "source": "index.html, logic.js, dados.js"
+    },
+    {
+      "fingerprint": "R-003",
+      "verdict": "rejected",
+      "title": "Prompt injection / LLM / agent / RAG / MCP",
+      "reason_disproved": "não há modelo de linguagem, RAG, pipeline de agente, MCP server/cliente nem consumo de output de modelo no site; Tesseract.js é OCR local (não é LLM).",
+      "source": "index.html"
+    },
+    {
+      "fingerprint": "R-004",
+      "verdict": "rejected",
+      "title": "Exposição de secrets / chaves de API hardcoded",
+      "reason_disproved": "não há chaves de API, tokens ou secrets hardcoded no código-fonte; Tesseract via CDN público não requer chave de autenticação.",
+      "source": "index.html, logic.js, sw.js"
+    }
+  ],
+  "generated_at": "2026-11-02"
+}

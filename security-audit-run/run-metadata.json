@@ -1,0 +1,31 @@
+{
+  "run_id": "run-1",
+  "repo": "silvioalbqrq/consulta-cnae",
+  "target": "C:\\Users\\Acer Aspire 5\\OneDrive\\Documentos\\Default Project\\consulta-cnae-site",
+  "source_ref": "main@5968607 (working tree clean, synced with origin/main)",
+  "profile": "standard",
+  "scope_paths": ["index.html", "logic.js", "dados.js", "sw.js", "build_dados.py", "classificacao_simples_23.json", "cnaes.json", "pdf.min.js", "pdf.worker.min.js"],
+  "budget": null,
+  "execution_policy": "sandboxed-source-and-local-only",
+  "companion_files": [
+    "CLIENT-SIDE.md",
+    "WEB-PROTOCOL-AND-AUTH.md",
+    "AI-AND-LLM.md",
+    "SUPPLY-CHAIN-AND-RELEASE.md",
+    "DATA-ISOLATION-AND-LIFECYCLE.md",
+    "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md"
+  ],
+  "prior_run_paths": null,
+  "shared_file_owners": {
+    "run-metadata.json": "parent",
+    "architecture.md": "parent",
+    "coverage-ledger.json": "parent",
+    "findings.json": "parent",
+    "REPORT.md": "parent",
+    "FINDINGS-DETAIL.md": "parent",
+    "NEEDS-VALIDATION.md": "parent"
+  },
+  "run_status": "complete",
+  "generated_at": "2026-11-02",
+  "methodology": "cloudflare/security-audit-skill 6-phase full audit"
+}
