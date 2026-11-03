@@ -273,8 +273,8 @@ input.num,select.num{width:100%;padding:10px;border:1px solid var(--line);border
 </div>
 </footer>
 
-<script src="logic.js?v=20261025-01"></script>
-<script src="dados.js?v=20261025-01"></script>
+<script src="logic.js?v=20261103-01"></script>
+<script src="dados.js?v=20261103-01"></script>
 <script>
 const {TAB,norm,soDig,fmtC,extractCnaes,splitSections,companyInfo,rateFor,verdictFor}=CNAELogic;
 const BRL=v=>v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
@@ -314,7 +314,7 @@ function boot(cls,mini){
 
 rcount.innerHTML='<div class="skel" style="width:120px"></div><div class="skel" style="width:200px"></div>';
 if(window.RADAR_DATA&&window.RADAR_DATA.length){boot(window.RADAR_DATA,window.RADAR_BASE||{});}
-else{fetch("dados.js?v=20261025-01").then(r=>r.text()).then(t=>{(0,eval)(t);boot(window.RADAR_DATA,window.RADAR_BASE||{});}).catch(()=>{rcount.textContent="Erro ao carregar dados. Abra via servidor HTTP."});}
+else{fetch("dados.js?v=20261103-01").then(r=>r.text()).then(t=>{(0,eval)(t);boot(window.RADAR_DATA,window.RADAR_BASE||{});}).catch(()=>{rcount.textContent="Erro ao carregar dados. Abra via servidor HTTP."});}
 if("serviceWorker" in navigator&&location.protocol!=="file:"){navigator.serviceWorker.register("sw.js").catch(e=>console.warn("Service worker:",e));}
 
 function pill(s){if(s==="DESATIVADA")return '<span class="pill p-des">DESATIVADA</span>';if(s==="OPTANTE")return '<span class="pill p-ok">OPTANTE</span>';if(s==="VEDADO")return '<span class="pill p-bad">VEDADO</span>';return '<span class="pill p-amb">AMBÍGUO</span>';}
@@ -451,8 +451,8 @@ function loadScriptOnce(src,integrity){
 function setProg(t){document.getElementById("aprog").textContent=t||"";}
 function byId7(d){return DATA.find(v=>v.id===d);}
 async function textFromPdf(buf){
-  if(typeof pdfjsLib==="undefined")await loadScriptOnce("pdf.min.js?v=20261025-01");
-  if(pdfjsLib.GlobalWorkerOptions&&!pdfjsLib.GlobalWorkerOptions.workerSrc)pdfjsLib.GlobalWorkerOptions.workerSrc="pdf.worker.min.js?v=20261025-01";
+  if(typeof pdfjsLib==="undefined")await loadScriptOnce("pdf.min.js?v=20261103-01");
+  if(pdfjsLib.GlobalWorkerOptions&&!pdfjsLib.GlobalWorkerOptions.workerSrc)pdfjsLib.GlobalWorkerOptions.workerSrc="pdf.worker.min.js?v=20261103-01";
   const pdf=await pdfjsLib.getDocument({data:buf,isEvalSupported:false}).promise;
   let txt="";
   const n=Math.min(pdf.numPages,10);

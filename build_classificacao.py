@@ -86,6 +86,8 @@ def enquadrar(cid, div, desc):
     if 45 <= dn <= 47:
         if re.match(r"^(45129|4530706|4542101|461)", cid):
             return True, ["V"], True, "Representação/intermediação — Anexo V, pode ir ao III com Fator R", "regra"
+        if re.match(r"^(4520|45439)", cid):
+            return True, ["III"], False, "Serviço de reparação/manutenção de veículos — Anexo III", "regra"
         return True, ["I"], False, "Comércio — Anexo I", "regra"
     if 49 <= dn <= 53:
         return True, ["III"], False, "Transporte municipal/cargas/logística — Anexo III", "regra"
@@ -167,12 +169,15 @@ for a in anexo:
         status = "AMBIGUO"
     else:
         status = "OPTANTE"
+    base = base_legal(status, ",".join(anexos), fr)
+    if re.match(r"^(4520|45439)", cid):
+        base = "LC 123/2006, art. 18, §5º-B, IX + Anexo III (reparos e manutenção em geral)"
     out.append({
         "cnae": a["cnae"], "id": cid, "descricao": desc, "divisao": div,
         "status": status, "anexos": ",".join(anexos),
         "fatorR": "SIM" if fr else "NAO",
         "motivo": motivo, "origem": origem,
-        "base": base_legal(status, ",".join(anexos), fr),
+        "base": base,
     })
 
 json.dump(out, open(P("classificacao_simples_23.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)

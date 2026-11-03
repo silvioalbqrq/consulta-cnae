@@ -78,3 +78,13 @@ test("código 2.2 desativado e optante a validar pedem confirmação", () => {
   assert.equal(rev.cls, "warn");
   assert.match(rev.txt, /VALIDAR/);
 });
+
+test("reparação e manutenção de veículos é Anexo III (não I)", () => {
+  const fs = require("node:fs");
+  const cls = JSON.parse(fs.readFileSync(new URL("./classificacao_simples_23.json", import.meta.url), "utf8"));
+  const byId = Object.fromEntries(cls.map(x => [x.id, x]));
+  for (const id of ["4520001", "4520002", "4520003", "4520004", "4520005", "4520006", "4520007", "4520008", "4543900"]) {
+    assert.equal(byId[id].anexos, "III", id);
+  }
+  assert.equal(byId["4530703"].anexos, "I", "comércio de peças continua no Anexo I");
+});
